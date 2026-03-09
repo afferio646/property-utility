@@ -37,3 +37,6 @@
  GET /properties/1 200 in 1496ms (compile: 1414ms, render: 82ms)
  GET /properties/1/trades/plumbing 200 in 1260ms (compile: 1193ms, render: 66ms)
  GET / 200 in 3.0s (compile: 1204ms, render: 1824ms)
+ GET / 200 in 982ms (compile: 506ms, render: 476ms)
+ GET / 200 in 886ms (compile: 299ms, render: 587ms)
+ GET / 200 in 221ms (compile: 90ms, render: 131ms)

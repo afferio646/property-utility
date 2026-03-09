@@ -54,7 +54,7 @@ export default function Home() {
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-bold text-white tracking-widest uppercase mb-1">
-                <span className="text-yellow-500">Facility</span> Property Utility
+                Property Management Utility
               </h1>
               <p className="text-xs sm:text-sm text-gray-400 uppercase tracking-wider">
                 Manage your active properties and trades
@@ -98,8 +98,8 @@ export default function Home() {
 
               {/* Property Details */}
               <div className="p-5 flex-1 flex flex-col">
-                <h3 className="text-lg font-bold text-white mb-1 truncate" title={prop.name}>{prop.name}</h3>
-                <p className="text-sm text-gray-400 mb-6 truncate" title={prop.address}>{prop.address || "No address provided"}</p>
+                <h3 className="text-lg font-bold text-white mb-1" title={prop.name}>{prop.name}</h3>
+                <p className="text-sm text-gray-400 mb-6" title={prop.address}>{prop.address || "No address provided"}</p>
 
                 <div className="mt-auto">
                   <Link
