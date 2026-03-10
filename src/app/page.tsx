@@ -6,7 +6,7 @@ import Link from "next/link";
 import { FaPlus, FaCamera, FaImage } from "react-icons/fa";
 
 export default function Home() {
-  const { properties, addProperty, userRole, setUserRole, photos } = useDemo();
+  const { properties, addProperty, userRole, setUserRole, photos, updatePropertyName } = useDemo();
 
   // Modal State
   const [showAddForm, setShowAddForm] = useState(false);
@@ -14,6 +14,9 @@ export default function Home() {
   const [newPropAddress, setNewPropAddress] = useState("");
   const [newPropImage, setNewPropImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [editingPropertyId, setEditingPropertyId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
+
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -42,6 +45,22 @@ export default function Home() {
     }
   };
 
+  const startEditing = (e: React.MouseEvent, propId: string, currentName: string) => {
+    e.preventDefault();
+    if (userRole === "manager") {
+      setEditingPropertyId(propId);
+      setEditingName(currentName);
+    }
+  };
+
+  const handleEditSubmit = (e: React.FormEvent | React.FocusEvent, propId: string) => {
+    e.preventDefault();
+    if (editingName.trim()) {
+      updatePropertyName(propId, editingName.trim());
+    }
+    setEditingPropertyId(null);
+  };
+
   return (
     <div className="min-h-screen bg-[#0b101e] text-gray-200 font-sans">
       <div className="max-w-7xl mx-auto px-6 py-12">
@@ -63,15 +82,7 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-4">
-            <select
-              value={userRole}
-              onChange={(e) => setUserRole(e.target.value as any)}
-              className="bg-[#151b2b] border border-gray-600 text-gray-300 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block px-3 py-2.5 outline-none transition-colors"
-            >
-              <option value="manager">Manager</option>
-              <option value="lead">Lead</option>
-              <option value="technician">Technical/Contractor</option>
-            </select>
+
 
             {userRole === "manager" && (
               <>
@@ -154,7 +165,26 @@ export default function Home() {
 
               {/* Property Details */}
               <div className="p-4 flex-1 flex flex-col">
-                <h3 className="text-sm font-bold text-gray-900 mb-1" title={prop.name}>{prop.name}</h3>
+                {editingPropertyId === prop.id ? (
+                  <form onSubmit={(e) => handleEditSubmit(e, prop.id)} className="mb-1">
+                    <input
+                      type="text"
+                      value={editingName}
+                      onChange={(e) => setEditingName(e.target.value)}
+                      onBlur={(e) => handleEditSubmit(e, prop.id)}
+                      autoFocus
+                      className="text-sm font-bold text-gray-900 w-full border-b border-blue-500 outline-none bg-transparent"
+                    />
+                  </form>
+                ) : (
+                  <h3
+                    className={`text-sm font-bold text-gray-900 mb-1 ${userRole === 'manager' ? 'cursor-pointer hover:text-blue-600' : ''}`}
+                    title={prop.name}
+                    onClick={(e) => startEditing(e, prop.id, prop.name)}
+                  >
+                    {prop.name}
+                  </h3>
+                )}
                 <p className="text-xs text-gray-600 mb-4 line-clamp-2" title={prop.address}>{prop.address || "No address provided"}</p>
 
                 <div className="mt-auto">
