@@ -6,7 +6,7 @@ import Link from "next/link";
 import { FaPlus, FaCamera, FaImage } from "react-icons/fa";
 
 export default function Home() {
-  const { properties, addProperty, userRole } = useDemo();
+  const { properties, addProperty, userRole, setUserRole } = useDemo();
 
   // Modal State
   const [showAddForm, setShowAddForm] = useState(false);
@@ -62,14 +62,26 @@ export default function Home() {
             </div>
           </div>
 
-          {userRole === "manager" && (
-            <button
-              onClick={() => setShowAddForm(true)}
-              className="flex items-center gap-2 bg-transparent border border-gray-600 hover:border-gray-400 text-gray-300 hover:text-white px-5 py-2.5 rounded text-sm font-bold tracking-wider uppercase transition-colors"
+          <div className="flex items-center gap-4">
+            <select
+              value={userRole}
+              onChange={(e) => setUserRole(e.target.value as any)}
+              className="bg-[#151b2b] border border-gray-600 text-gray-300 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block px-3 py-2.5 outline-none transition-colors"
             >
-              <FaPlus size={12} /> New Property
-            </button>
-          )}
+              <option value="manager">Manager</option>
+              <option value="lead">Lead</option>
+              <option value="technician">Technical/Contractor</option>
+            </select>
+
+            {userRole === "manager" && (
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="flex items-center gap-2 bg-transparent border border-gray-600 hover:border-gray-400 text-gray-300 hover:text-white px-5 py-2.5 rounded text-sm font-bold tracking-wider uppercase transition-colors"
+              >
+                <FaPlus size={12} /> New Property
+              </button>
+            )}
+          </div>
         </header>
 
         {/* Section Subtitle */}
@@ -78,11 +90,11 @@ export default function Home() {
         </div>
 
         {/* Properties Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {properties.map((prop) => (
-            <div key={prop.id} className="bg-[#151b2b] rounded-xl overflow-hidden shadow-lg border border-gray-800 flex flex-col hover:border-gray-600 transition-colors duration-300">
+            <div key={prop.id} className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-200 hover:shadow-xl hover:border-blue-400 hover:ring-1 hover:ring-blue-400 transition-all duration-300 flex flex-col">
               {/* Property Image */}
-              <div className="h-48 w-full bg-gray-900 relative">
+              <div className="h-32 w-full bg-gray-200 relative">
                 {prop.imageUrl ? (
                   <img
                     src={prop.imageUrl}
@@ -90,21 +102,21 @@ export default function Home() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-700">
-                    <FaImage size={48} />
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    <FaImage size={32} />
                   </div>
                 )}
               </div>
 
               {/* Property Details */}
-              <div className="p-5 flex-1 flex flex-col">
-                <h3 className="text-lg font-bold text-white mb-1" title={prop.name}>{prop.name}</h3>
-                <p className="text-sm text-gray-400 mb-6" title={prop.address}>{prop.address || "No address provided"}</p>
+              <div className="p-4 flex-1 flex flex-col">
+                <h3 className="text-sm font-bold text-gray-900 mb-1" title={prop.name}>{prop.name}</h3>
+                <p className="text-xs text-gray-600 mb-4 line-clamp-2" title={prop.address}>{prop.address || "No address provided"}</p>
 
                 <div className="mt-auto">
                   <Link
                     href={`/properties/${prop.id}`}
-                    className="block w-full text-center bg-transparent border border-gray-600 hover:border-blue-500 hover:text-blue-400 text-gray-300 py-2.5 rounded text-sm font-bold tracking-wider uppercase transition-colors"
+                    className="block w-full text-center bg-[#2563eb] hover:bg-[#1d4ed8] text-white py-2 rounded text-xs font-bold tracking-wider uppercase transition-colors shadow-sm"
                   >
                     Property Trades
                   </Link>

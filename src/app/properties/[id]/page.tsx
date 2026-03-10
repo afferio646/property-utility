@@ -54,71 +54,53 @@ export default function PropertyTrades() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-gray-200">
+    <div className="min-h-screen bg-[#0b101e] text-gray-200 font-sans">
       <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Navigation / Header */}
         <button
           onClick={() => router.push("/")}
-          className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors mb-8"
+          className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors mb-6 font-bold tracking-wider uppercase"
         >
-          <FaArrowLeft size={12} /> Back to Dashboard
+          <FaArrowLeft size={12} /> Back
         </button>
 
-        <div className="mb-10 border-b border-gray-800 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div className="mb-10 pb-4 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-800">
           <div>
-            <h1 className="text-4xl font-extrabold text-white tracking-tight">{property.name}</h1>
-            {property.address && (
-              <p className="text-sm text-gray-400 mt-3 flex items-center gap-2">
-                <FaMapMarkerAlt className="text-blue-500" />
-                {property.address}
-              </p>
-            )}
-            <p className="text-sm text-gray-500 mt-2 max-w-xl">
-              Select a trade below to manage associated photos, track checklist progress, and review field notes for this specific project.
+            <h1 className="text-2xl font-bold text-white tracking-widest uppercase mb-1">{property.name}</h1>
+            <p className="text-sm text-gray-400 uppercase tracking-wider">
+              Select a trade to manage work
             </p>
-          </div>
-          <div className="flex gap-4">
-             {/* Future stats / quick actions could go here */}
-             <div className="bg-[#111111] border border-gray-800 rounded-lg px-4 py-3 text-center min-w-[120px]">
-                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Status</p>
-                <p className="text-sm font-semibold text-green-500 flex items-center justify-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Active
-                </p>
-             </div>
           </div>
         </div>
 
-        {/* Trades List (Horizontal Cards) */}
-        <div className="flex flex-col gap-4">
-          <h2 className="text-lg font-semibold text-white mb-2">Select Trade Category</h2>
+        {/* Trades Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
           {tradeConfig.map((trade) => {
             const Icon = trade.icon;
+
+            // Mock active state for specific trades (e.g. plumbing, electric, paint)
+            const isActive = trade.type === 'plumbing' || trade.type === 'electric' || trade.type === 'paint';
+
             return (
               <Link
                 href={`/properties/${id}/trades/${trade.type}`}
                 key={trade.type}
                 className="block group"
               >
-                <div className="bg-white rounded-xl overflow-hidden hover:shadow-lg transition duration-300 shadow-sm flex items-center p-4 border border-gray-100">
-                  {/* Trade Icon (Thumbnail) */}
-                  <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-lg overflow-hidden bg-gray-100 shrink-0 flex items-center justify-center text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
-                    <Icon size={32} />
+                <div className={`bg-white rounded-xl shadow-md flex flex-col items-center justify-center p-6 h-40 transition-all duration-300 ${
+                  isActive
+                    ? "border-2 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)] scale-105"
+                    : "border border-gray-200 hover:border-blue-400 hover:ring-1 hover:ring-blue-400 hover:shadow-xl"
+                }`}>
+                  {/* Trade Icon */}
+                  <div className={`h-16 w-16 rounded-full flex items-center justify-center mb-4 transition-colors ${
+                    isActive ? "bg-blue-100 text-blue-600" : "bg-blue-50 text-blue-500 group-hover:bg-blue-100 group-hover:text-blue-600"
+                  }`}>
+                    <Icon size={28} />
                   </div>
 
                   {/* Trade Info */}
-                  <div className="ml-4 flex-1 min-w-0">
-                    <h2 className="text-base sm:text-lg font-bold text-gray-900 truncate">{trade.label}</h2>
-                    <p className="text-xs sm:text-sm text-gray-500 truncate mt-0.5">
-                      Manage photos and checklists
-                    </p>
-                  </div>
-
-                  {/* Trade Actions */}
-                  <div className="ml-4 shrink-0 flex items-center gap-4">
-                     <button className="text-sm text-blue-600 font-medium group-hover:text-blue-800 transition-colors px-3 py-1.5 rounded-md hover:bg-blue-50">
-                        View
-                     </button>
-                  </div>
+                  <h2 className="text-sm font-bold text-gray-900 text-center tracking-wide">{trade.label}</h2>
                 </div>
               </Link>
             );
