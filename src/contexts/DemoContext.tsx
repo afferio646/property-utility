@@ -3,18 +3,18 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 // Types
-export type UserRole = "manager" | "lead" | "technician";
+export type UserRole = "manager" | "lead" | "technician" | "none";
 
-export type TradeType =
-  | "plumbing"
-  | "electric"
-  | "tile"
-  | "cabinets"
-  | "paint"
-  | "windows"
-  | "doors"
-  | "floors"
-  | "misc";
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  company: string;
+  role: UserRole;
+}
+
+
+export type TradeType = string;
 
 export type PhotoStatus = "Work to be Done" | "Work Started" | "Work Completed";
 
@@ -36,19 +36,33 @@ export interface Photo {
   notes: Note[];
 }
 
+export interface CustomTrade {
+  id: string;
+  type: string;
+  label: string;
+  iconName: string;
+}
+
 export interface Property {
   id: string;
   name: string;
   address: string;
   createdAt: string;
   imageUrl?: string;
+  customTrades?: CustomTrade[];
 }
 
 interface DemoContextType {
+  currentUser: User | null;
+  setCurrentUser: (user: User | null) => void;
+  users: User[];
+  addUser: (name: string, email: string, company: string, role: UserRole) => void;
   userRole: UserRole;
   setUserRole: (role: UserRole) => void;
+  updatePropertyName: (propertyId: string, name: string) => void;
   properties: Property[];
   addProperty: (name: string, address?: string, imageUrl?: string) => void;
+  addCustomTrade: (propertyId: string, label: string) => void;
   photos: Photo[];
   addPhoto: (propertyId: string, trade: TradeType, url: string) => void;
   updatePhotoStatus: (photoId: string, status: PhotoStatus) => void;
@@ -125,9 +139,36 @@ const initialPhotos: Photo[] = [
 ];
 
 export const DemoProvider = ({ children }: { children: ReactNode }) => {
-  const [userRole, setUserRole] = useState<UserRole>("manager");
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
+  const [userRole, setUserRole] = useState<UserRole>("none"); // derived or fallback
   const [properties, setProperties] = useState<Property[]>(initialProperties);
   const [photos, setPhotos] = useState<Photo[]>(initialPhotos);
+
+  const addUser = (name: string, email: string, company: string, role: UserRole) => {
+    const newUser: User = { id: Date.now().toString(), name, email, company, role };
+    setUsers([...users, newUser]);
+    if (!currentUser) {
+        setCurrentUser(newUser);
+        setUserRole(role);
+    }
+  };
+
+  const updatePropertyName = (propertyId: string, name: string) => {
+    setProperties(properties.map(p => p.id === propertyId ? { ...p, name } : p));
+  };
+
+  const addCustomTrade = (propertyId: string, label: string) => {
+    const type = label.toLowerCase().replace(/[^a-z0-9]/g, '-');
+    const newTrade: CustomTrade = { id: Date.now().toString(), type, label, iconName: "FaTools" };
+    setProperties(properties.map(p => {
+      if (p.id === propertyId) {
+        return { ...p, customTrades: [...(p.customTrades || []), newTrade] };
+      }
+      return p;
+    }));
+  };
+
 
   const addProperty = (name: string, address = "", imageUrl = "") => {
     const newProp: Property = {
@@ -222,10 +263,16 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
   return (
     <DemoContext.Provider
       value={{
+        currentUser,
+        setCurrentUser,
+        users,
+        addUser,
         userRole,
         setUserRole,
+        updatePropertyName,
         properties,
         addProperty,
+        addCustomTrade,
         photos,
         addPhoto,
         updatePhotoStatus,

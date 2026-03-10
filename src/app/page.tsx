@@ -74,12 +74,23 @@ export default function Home() {
             </select>
 
             {userRole === "manager" && (
-              <button
-                onClick={() => setShowAddForm(true)}
-                className="flex items-center gap-2 bg-transparent border border-gray-600 hover:border-gray-400 text-gray-300 hover:text-white px-5 py-2.5 rounded text-sm font-bold tracking-wider uppercase transition-colors"
-              >
-                <FaPlus size={12} /> New Property
-              </button>
+              <>
+                <button
+                  onClick={() => setShowAddForm(true)}
+                  className="flex items-center gap-2 bg-transparent border border-gray-600 hover:border-gray-400 text-gray-300 hover:text-white px-5 py-2.5 rounded text-sm font-bold tracking-wider uppercase transition-colors"
+                >
+                  <FaPlus size={12} /> New Property
+                </button>
+                <button
+                  onClick={() => {
+                    const event = new Event("open-manage-users");
+                    window.dispatchEvent(event);
+                  }}
+                  className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-bold shadow-md transition-colors"
+                >
+                  Manage Users
+                </button>
+              </>
             )}
           </div>
         </header>
