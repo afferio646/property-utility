@@ -90,11 +90,11 @@ export default function Home() {
         </div>
 
         {/* Properties Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-[1000px] justify-items-center sm:justify-items-start">
           {properties.map((prop) => (
-            <div key={prop.id} className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-200 hover:shadow-xl hover:border-blue-400 hover:ring-1 hover:ring-blue-400 transition-all duration-300 flex flex-col">
+            <div key={prop.id} className="bg-white rounded-lg overflow-hidden shadow-md border-2 border-gray-300 hover:shadow-xl hover:border-blue-500 hover:ring-2 hover:ring-blue-500 transition-all duration-300 flex flex-col w-full max-w-[280px]">
               {/* Property Image */}
-              <div className="h-32 w-full bg-gray-200 relative">
+              <div className="h-36 w-full bg-gray-200 relative border-b-2 border-gray-200">
                 {prop.imageUrl ? (
                   <img
                     src={prop.imageUrl}

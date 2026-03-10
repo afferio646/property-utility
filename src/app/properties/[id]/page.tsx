@@ -74,29 +74,40 @@ export default function PropertyTrades() {
         </div>
 
         {/* Trades Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 max-w-[1000px] justify-items-center sm:justify-items-start">
           {tradeConfig.map((trade) => {
             const Icon = trade.icon;
 
             // Mock active state for specific trades (e.g. plumbing, electric, paint)
             const isActive = trade.type === 'plumbing' || trade.type === 'electric' || trade.type === 'paint';
 
+            // TODO: In the future, we will check if a trade is "completed" and apply a green border/highlight.
+            // For now, it defaults to false.
+            const isCompleted = false;
+
+            // Determine styles based on state
+            let containerStyles = "bg-white border-2 border-gray-300 hover:border-blue-500 hover:ring-2 hover:ring-blue-500 hover:shadow-xl";
+            let iconContainerStyles = "bg-blue-50 text-blue-500 group-hover:bg-blue-100 group-hover:text-blue-600";
+
+            if (isCompleted) {
+               containerStyles = "bg-green-50 border-4 border-green-500 shadow-md";
+               iconContainerStyles = "bg-green-100 text-green-600";
+            } else if (isActive) {
+               // Thicker blue border, light gray background to make it undeniably active
+               containerStyles = "bg-gray-100 border-4 border-blue-600 shadow-[0_4px_20px_rgba(37,99,235,0.4)] scale-105";
+               iconContainerStyles = "bg-blue-200 text-blue-700";
+            }
+
             return (
               <Link
                 href={`/properties/${id}/trades/${trade.type}`}
                 key={trade.type}
-                className="block group"
+                className="block group w-full max-w-[280px]"
               >
-                <div className={`bg-white rounded-xl shadow-md flex flex-col items-center justify-center p-6 h-40 transition-all duration-300 ${
-                  isActive
-                    ? "border-2 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)] scale-105"
-                    : "border border-gray-200 hover:border-blue-400 hover:ring-1 hover:ring-blue-400 hover:shadow-xl"
-                }`}>
+                <div className={`rounded-lg flex flex-col items-center justify-center p-6 h-36 transition-all duration-300 w-full ${containerStyles}`}>
                   {/* Trade Icon */}
-                  <div className={`h-16 w-16 rounded-full flex items-center justify-center mb-4 transition-colors ${
-                    isActive ? "bg-blue-100 text-blue-600" : "bg-blue-50 text-blue-500 group-hover:bg-blue-100 group-hover:text-blue-600"
-                  }`}>
-                    <Icon size={28} />
+                  <div className={`h-14 w-14 rounded-full flex items-center justify-center mb-3 transition-colors ${iconContainerStyles}`}>
+                    <Icon size={24} />
                   </div>
 
                   {/* Trade Info */}
