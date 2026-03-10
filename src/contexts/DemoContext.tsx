@@ -16,7 +16,7 @@ export interface User {
 
 export type TradeType = string;
 
-export type PhotoStatus = "Work to be Done" | "Work Started" | "Work Completed";
+export type PhotoStatus = "Need to Inspect" | "Work to be Done" | "Work Started" | "Work Completed";
 
 export interface Note {
   id: string;
@@ -187,7 +187,7 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
       propertyId,
       trade,
       url,
-      status: "Work to be Done",
+      status: "Need to Inspect",
       notes: [],
     };
     setPhotos([...photos, newPhoto]);

@@ -69,26 +69,26 @@ export default function PropertyTrades() {
 
   return (
     <div className="min-h-screen bg-[#0b101e] text-gray-200 font-sans">
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Navigation / Header */}
         <button
           onClick={() => router.push("/")}
-          className="flex items-center gap-2 text-xs text-gray-400 hover:text-white transition-colors mb-6 font-bold tracking-widest uppercase"
+          className="flex items-center gap-1.5 text-[10px] text-gray-400 hover:text-white transition-colors mb-4 font-bold tracking-widest uppercase"
         >
-          <FaArrowLeft size={10} /> Back
+          <FaArrowLeft size={8} /> Back
         </button>
 
-        <div className="mb-8 pb-8 border-b border-gray-800/50">
-          <h1 className="text-xl font-bold text-white tracking-widest uppercase mb-2">{property.name}</h1>
-          <p className="text-xs text-gray-500 uppercase tracking-widest">
+        <div className="mb-6 pb-6 border-b border-gray-800/50">
+          <h1 className="text-lg font-bold text-white tracking-widest uppercase mb-1 leading-tight">{property.name}</h1>
+          <p className="text-[10px] text-gray-500 uppercase tracking-widest leading-tight">
             Select a trade to manage work
           </p>
         </div>
 
         {/* Trades Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 max-w-[1000px] justify-items-center sm:justify-items-start">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 justify-items-center">
           {userRole === "manager" && (
-            <div className="w-full max-w-[280px]">
+            <div className="w-full max-w-[180px]">
               {isAddingTrade ? (
                 <div className="p-4 rounded-xl bg-[#111827] border border-blue-500/50 h-32 flex flex-col justify-center">
                   <form onSubmit={handleAddTrade}>
@@ -98,23 +98,23 @@ export default function PropertyTrades() {
                       placeholder="Trade Name..."
                       value={newTradeName}
                       onChange={(e) => setNewTradeName(e.target.value)}
-                      className="w-full bg-[#1f2937] border border-gray-600 rounded p-2 text-white text-xs mb-2 outline-none focus:border-blue-500"
+                      className="w-full bg-[#1f2937] border border-gray-600 rounded p-1.5 text-white text-[10px] mb-2 outline-none focus:border-blue-500"
                     />
-                    <div className="flex gap-2">
-                      <button type="button" onClick={() => setIsAddingTrade(false)} className="text-[10px] text-gray-400 hover:text-white px-2 py-1 uppercase tracking-wider font-bold">Cancel</button>
-                      <button type="submit" className="text-[10px] bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded font-bold uppercase tracking-wider">Add</button>
+                    <div className="flex gap-1.5">
+                      <button type="button" onClick={() => setIsAddingTrade(false)} className="text-[9px] text-gray-400 hover:text-white px-1.5 py-0.5 uppercase tracking-wider font-bold">Cancel</button>
+                      <button type="submit" className="text-[9px] bg-blue-600 hover:bg-blue-500 text-white px-2 py-0.5 rounded font-bold uppercase tracking-wider">Add</button>
                     </div>
                   </form>
                 </div>
               ) : (
                 <button
                   onClick={() => setIsAddingTrade(true)}
-                  className="w-full rounded-xl bg-[#121927] border border-dashed border-[#3b82f6]/60 hover:border-[#3b82f6] hover:bg-[#1a2333] transition-colors group flex flex-col items-center justify-center h-32"
+                  className="w-full rounded-xl bg-[#121927] border border-dashed border-[#3b82f6]/60 hover:border-[#3b82f6] hover:bg-[#1a2333] transition-colors group flex flex-col items-center justify-center h-24"
                 >
-                  <div className="text-[#3b82f6] mb-3 group-hover:scale-110 transition-transform">
-                    <FaPlus size={20} />
+                  <div className="text-[#3b82f6] mb-2 group-hover:scale-110 transition-transform">
+                    <FaPlus size={16} />
                   </div>
-                  <span className="text-[11px] font-bold text-[#3b82f6] tracking-widest uppercase">ADD TRADE</span>
+                  <span className="text-[10px] font-bold text-[#3b82f6] tracking-widest uppercase leading-tight">ADD TRADE</span>
                 </button>
               )}
             </div>
@@ -131,9 +131,9 @@ export default function PropertyTrades() {
             const isActive = hasPhotos && !allCompleted;
             const isCompleted = allCompleted;
 
-            let buttonStyles = "w-full rounded-xl flex flex-col items-center justify-center h-32 transition-all duration-200 relative overflow-hidden group-hover:-translate-y-1 group-hover:shadow-[0_10px_20px_rgba(0,0,0,0.3)]";
-            let iconStyles = "mb-3 transition-transform group-hover:scale-110 z-10 relative";
-            let textStyles = "text-[11px] font-bold tracking-widest uppercase z-10 relative";
+            let buttonStyles = "w-full rounded-xl flex flex-col items-center justify-center h-24 transition-all duration-200 relative overflow-hidden group-hover:-translate-y-1 group-hover:shadow-[0_8px_16px_rgba(0,0,0,0.3)] max-w-[180px]";
+            let iconStyles = "mb-2 transition-transform group-hover:scale-110 z-10 relative";
+            let textStyles = "text-[10px] font-bold tracking-widest uppercase z-10 relative leading-tight";
 
             if (isCompleted) {
               buttonStyles += " bg-gradient-to-b from-green-400 to-green-600 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_4px_10px_rgba(34,197,94,0.3)] border border-green-500";
@@ -153,14 +153,14 @@ export default function PropertyTrades() {
               <Link
                 href={`/properties/${id}/trades/${trade.type}`}
                 key={trade.type}
-                className="block group w-full max-w-[280px]"
+                className="block group w-full max-w-[180px]"
               >
                 <div className={buttonStyles}>
                   {/* Top gloss reflection for 3D effect */}
                   <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-white/30 to-transparent pointer-events-none rounded-t-xl opacity-70"></div>
 
                   <div className={iconStyles}>
-                    <Icon size={22} />
+                    <Icon size={18} />
                   </div>
                   <h2 className={textStyles}>{trade.label}</h2>
                 </div>

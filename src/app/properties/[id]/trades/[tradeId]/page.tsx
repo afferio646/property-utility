@@ -127,57 +127,55 @@ export default function TradeDetailView() {
   return (
     <div className="min-h-screen bg-[#0b101e] text-gray-200 flex flex-col font-sans">
       {/* Header */}
-      <header className="bg-[#0b101e] border-b border-gray-800 p-6 shrink-0 z-10 sticky top-0 shadow-lg">
+      <header className="bg-[#0b101e] border-b border-gray-800 p-4 shrink-0 z-10 sticky top-0 shadow-lg">
         <div className="max-w-7xl mx-auto">
           {/* Navigation */}
           <button
             onClick={() => router.push(`/properties/${id}`)}
-            className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors mb-4 font-bold tracking-wider uppercase bg-transparent border border-gray-700 hover:border-gray-500 px-4 py-2 rounded shadow-sm hover:shadow-md w-fit"
+            className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors mb-2 font-bold tracking-wider uppercase bg-transparent border border-gray-700 hover:border-gray-500 px-2 py-1 rounded shadow-sm hover:shadow-md w-fit"
           >
-            <FaArrowLeft size={12} /> Back
+            <FaArrowLeft size={10} /> Back
           </button>
 
-          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4 mt-2">
+          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-2 mt-1">
             <div>
-              <h1 className="text-3xl font-extrabold text-white tracking-widest uppercase mb-1 drop-shadow-md">{tradeId} TRADE</h1>
-              <p className="text-lg text-gray-300 font-medium tracking-wide">
+              <h1 className="text-xl font-extrabold text-white tracking-widest uppercase mb-0.5 drop-shadow-md leading-tight">{tradeId} TRADE</h1>
+              <p className="text-sm text-gray-300 font-medium tracking-wide leading-tight">
                 {property.name}
               </p>
               {property.address && (
-                <p className="text-sm text-gray-500 mt-1 uppercase tracking-wider">
+                <p className="text-[10px] text-gray-500 mt-0.5 uppercase tracking-wider leading-tight">
                   {property.address}
                 </p>
               )}
             </div>
 
-            {userRole !== "manager" && (
-              <button
-                onClick={() => setShowAddPhoto(!showAddPhoto)}
-                className="flex items-center gap-2 bg-gradient-to-b from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white px-5 py-2.5 rounded text-sm font-bold tracking-wider uppercase transition-all shadow-[0_4px_14px_rgba(37,99,235,0.4)] border border-blue-400/50 hover:shadow-[0_6px_20px_rgba(37,99,235,0.6)] hover:-translate-y-0.5"
-              >
-                <FaCamera size={14} /> Add Trade Photo
-              </button>
-            )}
+            <button
+              onClick={() => setShowAddPhoto(!showAddPhoto)}
+              className="flex items-center gap-1.5 bg-gradient-to-b from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white px-3 py-1.5 rounded text-[10px] font-bold tracking-wider uppercase transition-all shadow-md border border-blue-400/50 hover:shadow-lg mt-2 md:mt-0"
+            >
+              <FaCamera size={12} /> Add New Task Card
+            </button>
           </div>
         </div>
       </header>
 
       {showAddPhoto && (
-        <div className="bg-[#151b2b] p-6 border-b border-gray-800 shrink-0 shadow-inner">
-          <form onSubmit={handleAddPhoto} className="flex flex-col sm:flex-row gap-3 max-w-4xl mx-auto">
+        <div className="bg-[#151b2b] p-3 border-b border-gray-800 shrink-0 shadow-inner">
+          <form onSubmit={handleAddPhoto} className="flex flex-col sm:flex-row gap-2 max-w-4xl mx-auto">
             <input
               type="url"
-              placeholder="Paste image URL here..."
-              className="flex-1 bg-[#0b101e] border border-gray-600 text-white p-3 text-sm rounded shadow-inner focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
+              placeholder="Paste image URL here to create a new task card..."
+              className="flex-1 bg-[#0b101e] border border-gray-600 text-white p-2 text-xs rounded shadow-inner focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
               value={newPhotoUrl}
               onChange={(e) => setNewPhotoUrl(e.target.value)}
               required
             />
             <div className="flex gap-2">
-              <button type="button" onClick={() => setShowAddPhoto(false)} className="px-5 py-2 text-sm font-bold tracking-wider uppercase text-gray-400 hover:text-white transition bg-gray-800 hover:bg-gray-700 rounded border border-gray-600">
+              <button type="button" onClick={() => setShowAddPhoto(false)} className="px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase text-gray-400 hover:text-white transition bg-gray-800 hover:bg-gray-700 rounded border border-gray-600">
                 Cancel
               </button>
-              <button type="submit" className="bg-gradient-to-b from-blue-500 to-blue-600 px-6 py-2 rounded text-sm font-bold tracking-wider uppercase text-white transition shadow-[0_4px_10px_rgba(37,99,235,0.3)] border border-blue-400/50 hover:from-blue-400 hover:to-blue-500">
+              <button type="submit" className="bg-gradient-to-b from-blue-500 to-blue-600 px-4 py-1.5 rounded text-[10px] font-bold tracking-wider uppercase text-white transition shadow-md border border-blue-400/50 hover:from-blue-400 hover:to-blue-500">
                 Upload
               </button>
             </div>
@@ -186,7 +184,7 @@ export default function TradeDetailView() {
       )}
 
       {/* Main Content: List of Horizontal White Cards */}
-      <div className="flex-1 max-w-7xl mx-auto w-full p-6 pb-20">
+      <div className="flex-1 max-w-7xl mx-auto w-full p-2 pb-20">
 
         {tradePhotos.length === 0 ? (
           <div className="text-center py-20 border-2 border-dashed border-gray-700 rounded-xl bg-[#151b2b] shadow-inner">
@@ -195,7 +193,7 @@ export default function TradeDetailView() {
             <p className="text-gray-500 text-sm">Upload photos to start creating task checklists.</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             {tradePhotos.map((photo) => {
               const completedNotes = photo.notes.filter(n => n.completed).length;
               const totalNotes = photo.notes.length;
@@ -210,6 +208,9 @@ export default function TradeDetailView() {
               } else if (photo.status === 'Work Started') {
                 statusWrapperStyle = "p-[3px] rounded bg-gradient-to-b from-yellow-400 to-yellow-600 shadow-[0_0_15px_rgba(234,179,8,0.6)]";
                 statusSelectStyle = "bg-gradient-to-b from-yellow-500 to-yellow-700 text-white font-bold tracking-wider uppercase shadow-[inset_0_2px_5px_rgba(255,255,255,0.4)]";
+              } else if (photo.status === 'Need to Inspect') {
+                statusWrapperStyle = "p-[3px] rounded bg-gradient-to-b from-orange-400 to-orange-600 shadow-[0_0_15px_rgba(249,115,22,0.6)]";
+                statusSelectStyle = "bg-gradient-to-b from-orange-500 to-orange-700 text-white font-bold tracking-wider uppercase shadow-[inset_0_2px_5px_rgba(255,255,255,0.3)]";
               } else {
                 // Work to be Done
                 statusWrapperStyle = "p-[3px] rounded bg-gradient-to-b from-red-400 to-red-600 shadow-[0_0_15px_rgba(239,68,68,0.6)]";
@@ -217,63 +218,79 @@ export default function TradeDetailView() {
               }
 
               return (
-                <div key={photo.id} className="bg-gradient-to-b from-gray-200 to-gray-400 p-[3px] rounded-xl shadow-[0_8px_20px_rgba(0,0,0,0.6)] hover:shadow-[0_12px_25px_rgba(0,0,0,0.8)] transition-all duration-300">
-                  <div className="bg-gradient-to-b from-white to-gray-50 rounded-lg overflow-hidden flex flex-col lg:flex-row items-stretch lg:items-center p-4 h-full relative border border-white/60 shadow-[inset_0_2px_10px_rgba(255,255,255,1),inset_0_-2px_10px_rgba(0,0,0,0.05)]">
+                <div key={photo.id} className="bg-gradient-to-b from-gray-200 to-gray-400 p-[2px] rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                  <div className="bg-gradient-to-b from-white to-gray-50 rounded-md overflow-hidden flex flex-col p-2 h-full relative border border-white/60">
 
                     {/* Far Left: Small Picture Thumbnail */}
-                    <div className="h-48 lg:h-32 w-full lg:w-48 rounded-md overflow-hidden bg-gray-200 shrink-0 mb-4 lg:mb-0 border border-gray-300 shadow-inner relative">
+                    <div className="h-40 w-full rounded overflow-hidden bg-gray-200 shrink-0 mb-3 border border-gray-300 shadow-inner relative group/photo">
                       <Image
                         src={photo.url}
                         alt={`Task Photo`}
                         fill
                         className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 192px"
+                        sizes="(max-width: 768px) 100vw, 112px"
+                        unoptimized
                       />
                       {/* Inner shadow overlay for 3D picture frame effect */}
-                      <div className="absolute inset-0 shadow-[inset_0_2px_8px_rgba(0,0,0,0.2)] pointer-events-none"></div>
+                      <div className="absolute inset-0 shadow-[inset_0_1px_4px_rgba(0,0,0,0.1)] pointer-events-none"></div>
+
+                      {/* Hover Overlay with Add Photo Button */}
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/photo:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 z-10 backdrop-blur-[1px]">
+                         <button
+                           onClick={() => {
+                             const url = window.prompt("Enter new image URL to add to this card:");
+                             if (url) alert("In a full app, this would append the photo to this task card.");
+                           }}
+                           className="bg-white/90 hover:bg-white text-gray-900 rounded-full p-2 shadow-lg hover:scale-110 transition-transform flex items-center justify-center"
+                           title="Add additional photo"
+                         >
+                           <FaPlus size={10} />
+                         </button>
+                         <span className="text-[8px] font-bold text-white uppercase tracking-wider">Add Photo</span>
+                      </div>
                     </div>
 
                     {/* Center: Notes & Checkmarks */}
-                    <div className="lg:ml-6 flex-1 flex flex-col gap-3 min-w-0 py-2">
+                    <div className="sm:ml-3 flex-1 flex flex-col gap-1.5 min-w-0 py-1">
                       {/* Add Note Form */}
-                      <form onSubmit={(e) => handleAddNote(e, photo.id)} className="flex gap-2 w-full max-w-md">
+                      <form onSubmit={(e) => handleAddNote(e, photo.id)} className="flex gap-1.5 w-full max-w-sm">
                         <input
                           type="text"
                           placeholder="Add new task..."
-                          className="flex-1 bg-white border border-gray-300 text-gray-900 text-sm p-2 rounded shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
+                          className="flex-1 bg-white border border-gray-300 text-gray-900 text-[11px] p-1.5 rounded shadow-inner focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
                           value={newNotes[photo.id] || ""}
                           onChange={(e) => updateNewNoteText(photo.id, e.target.value)}
                         />
                         <button
                           type="submit"
-                          className="bg-gradient-to-b from-blue-100 to-blue-200 text-blue-700 border border-blue-300 px-3 rounded shadow-sm hover:from-blue-500 hover:to-blue-600 hover:text-white transition-all disabled:opacity-50 disabled:grayscale"
+                          className="bg-gradient-to-b from-blue-100 to-blue-200 text-blue-700 border border-blue-300 px-2 rounded shadow-sm hover:from-blue-500 hover:to-blue-600 hover:text-white transition-all disabled:opacity-50 disabled:grayscale"
                           disabled={!(newNotes[photo.id] || "").trim()}
                         >
-                          <FaPlus size={12} />
+                          <FaPlus size={10} />
                         </button>
                       </form>
 
                       {/* Checklist */}
                       {photo.notes.length > 0 && (
-                        <div className="mt-1 space-y-1">
+                        <div className="mt-2 space-y-0.5 max-h-[120px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
                           {photo.notes.map((note) => (
-                                                        <div key={note.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4 group/note p-1.5 hover:bg-gray-100 rounded transition-colors w-full">
-                              <div className="flex items-start gap-3 flex-1 min-w-0">
+                            <div key={note.id} className="flex flex-col justify-between gap-1 group/note p-1.5 hover:bg-gray-100 rounded transition-colors w-full border-b border-gray-100 last:border-0">
+                              <div className="flex items-start gap-1.5 flex-1 min-w-0">
                                 <button
                                   onClick={() => toggleNote(photo.id, note.id)}
                                   className={`mt-0.5 flex-shrink-0 transition-colors drop-shadow-sm ${
                                     note.completed ? "text-green-500" : "text-gray-400 hover:text-blue-500"
                                   }`}
                                 >
-                                  {note.completed ? <FaCheckCircle size={16} /> : <FaRegCircle size={16} />}
+                                  {note.completed ? <FaCheckCircle size={12} /> : <FaRegCircle size={12} />}
                                 </button>
 
                                 {editingNoteId === note.id ? (
-                                  <div className="flex-1 flex gap-2 w-full">
+                                  <div className="flex-1 flex gap-1 w-full">
                                     <input
                                       type="text"
                                       autoFocus
-                                      className="flex-1 bg-white border border-blue-400 text-gray-900 text-sm px-2 py-0.5 rounded shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition w-full"
+                                      className="flex-1 bg-white border border-blue-400 text-gray-900 text-[11px] px-1 py-0.5 rounded shadow-inner focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition w-full"
                                       value={editingText}
                                       onChange={(e) => setEditingText(e.target.value)}
                                       onKeyDown={(e) => handleEditKeyDown(e, photo.id, note.id)}
@@ -282,7 +299,7 @@ export default function TradeDetailView() {
                                   </div>
                                 ) : (
                                   <span
-                                    className={`text-sm font-medium truncate flex-1 cursor-pointer ${note.completed ? "text-gray-400 line-through" : "text-gray-800 hover:text-blue-600 transition-colors"}`}
+                                    className={`text-[11px] font-medium truncate flex-1 cursor-pointer leading-tight ${note.completed ? "text-gray-400 line-through" : "text-gray-800 hover:text-blue-600 transition-colors"}`}
                                     onClick={() => startEditing(note.id, note.text)}
                                     title="Click to edit task"
                                   >
@@ -291,27 +308,27 @@ export default function TradeDetailView() {
                                 )}
                               </div>
 
-                              <div className="flex items-center gap-2 self-end sm:self-auto shrink-0 pl-7 sm:pl-0">
-                                <div className="text-[10px] text-gray-500 whitespace-nowrap flex flex-row gap-2">
+                              <div className="flex items-center gap-1.5 self-end sm:self-auto shrink-0 pl-5 sm:pl-0">
+                                <div className="text-[9px] text-gray-500 whitespace-nowrap flex flex-row gap-1.5">
                                   <span>Start: {formatDate(note.createdAt)}</span>
                                   {note.completed && note.completedDate && (
                                     <span>Completed: {formatDate(note.completedDate)}</span>
                                   )}
                                 </div>
-                                <div className="flex items-center gap-1 opacity-0 group-hover/note:opacity-100 transition-opacity">
+                                <div className="flex items-center gap-0.5 opacity-0 group-hover/note:opacity-100 transition-opacity">
                                   <button
                                     onClick={(e) => { e.stopPropagation(); startEditing(note.id, note.text); }}
-                                    className="text-gray-300 hover:text-blue-500 p-1"
+                                    className="text-gray-300 hover:text-blue-500 p-0.5"
                                     title="Edit task"
                                   >
-                                    <FaPencilAlt size={12} />
+                                    <FaPencilAlt size={10} />
                                   </button>
                                   <button
                                     onClick={(e) => { e.stopPropagation(); deleteNote(photo.id, note.id); }}
-                                    className="text-gray-300 hover:text-red-500 p-1"
+                                    className="text-gray-300 hover:text-red-500 p-0.5"
                                     title="Delete task"
                                   >
-                                    <FaTrash size={12} />
+                                    <FaTrash size={10} />
                                   </button>
                                 </div>
                               </div>
@@ -322,18 +339,19 @@ export default function TradeDetailView() {
                     </div>
 
                     {/* Far Right: Work Status Dropdown & Tasks Counter */}
-                    <div className="lg:ml-6 mt-4 lg:mt-0 shrink-0 flex flex-row lg:flex-col items-center lg:items-end justify-between lg:justify-center gap-4">
-                      <div className="text-xs font-bold tracking-wider uppercase text-gray-600 flex items-center gap-1.5 bg-gray-200 border border-gray-300 px-3 py-1.5 rounded shadow-sm">
-                        <FaFileInvoice className="text-gray-500" /> Tasks: {completedNotes}/{totalNotes}
+                    <div className="sm:ml-3 mt-2 sm:mt-0 shrink-0 flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2">
+                      <div className="text-[9px] font-bold tracking-wider uppercase text-gray-600 flex items-center gap-1 bg-gray-200 border border-gray-300 px-2 py-1 rounded shadow-sm">
+                        <FaFileInvoice className="text-gray-500" size={10} /> Tasks: {completedNotes}/{totalNotes}
                       </div>
 
                       {/* 3D Glowing Status Dropdown Wrapper */}
                       <div className={statusWrapperStyle}>
                         <select
-                          className={`text-xs w-full sm:w-auto px-4 py-2.5 rounded appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/50 transition-colors border-none ${statusSelectStyle}`}
+                          className={`text-[10px] w-full sm:w-auto px-2 py-1.5 rounded appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-white/50 transition-colors border-none ${statusSelectStyle}`}
                           value={photo.status}
-                          onChange={(e) => updatePhotoStatus(photo.id, e.target.value as "Work to be Done" | "Work Started" | "Work Completed")}
+                          onChange={(e) => updatePhotoStatus(photo.id, e.target.value as "Need to Inspect" | "Work to be Done" | "Work Started" | "Work Completed")}
                         >
+                          <option value="Need to Inspect" className="bg-gray-800 text-white">NEED TO INSPECT</option>
                           <option value="Work to be Done" className="bg-gray-800 text-white">WORK TO BE DONE</option>
                           <option value="Work Started" className="bg-gray-800 text-white">WORK STARTED</option>
                           <option value="Work Completed" className="bg-gray-800 text-white">WORK COMPLETED</option>

@@ -29,7 +29,6 @@ export const viewport: Viewport = {
 import { DemoProvider } from "@/contexts/DemoContext";
 import SignUpModal from "./SignUpModal";
 import ManageUsersModal from "./ManageUsersModal";
-import Header from "./Header";
 
 export default function RootLayout({
   children,
@@ -39,11 +38,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0b101e]`}
       >
         <DemoProvider>
-          <Header />
-          <main className="pb-16 pt-4">
+          <main>
             {children}
           </main>
           <SignUpModal />
