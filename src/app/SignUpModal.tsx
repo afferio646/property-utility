@@ -4,7 +4,9 @@ import React, { useState, useEffect } from "react";
 import { useDemo, UserRole } from "@/contexts/DemoContext";
 import { useSearchParams, useRouter } from "next/navigation";
 
-export default function SignUpModal() {
+import { Suspense } from "react";
+
+function SignUpModalContent() {
   const { currentUser, setCurrentUser, addUser, setUserRole } = useDemo();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -155,5 +157,13 @@ export default function SignUpModal() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function SignUpModal() {
+  return (
+    <Suspense fallback={null}>
+      <SignUpModalContent />
+    </Suspense>
   );
 }
