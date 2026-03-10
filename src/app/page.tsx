@@ -6,7 +6,7 @@ import Link from "next/link";
 import { FaPlus, FaCamera, FaImage } from "react-icons/fa";
 
 export default function Home() {
-  const { properties, addProperty, userRole, setUserRole } = useDemo();
+  const { properties, addProperty, userRole, setUserRole, photos } = useDemo();
 
   // Modal State
   const [showAddForm, setShowAddForm] = useState(false);
@@ -91,7 +91,25 @@ export default function Home() {
 
         {/* Properties Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-[1000px] justify-items-center sm:justify-items-start">
-          {properties.map((prop) => (
+          {properties.map((prop) => {
+            // Determine property status based on its trades (photos)
+            const propertyPhotos = photos.filter(p => p.propertyId === prop.id);
+            let status = 'default';
+            if (propertyPhotos.length > 0) {
+              const allCompleted = propertyPhotos.every(p => p.status === 'Work Completed');
+              status = allCompleted ? 'completed' : 'active';
+            }
+
+            let buttonClasses = "block w-full text-center py-2 rounded text-xs font-bold tracking-wider uppercase transition-colors shadow-sm";
+            if (status === 'completed') {
+              buttonClasses += " bg-green-600 hover:bg-green-700 text-white";
+            } else if (status === 'active') {
+              buttonClasses += " bg-gray-700 hover:bg-gray-800 text-white";
+            } else {
+              buttonClasses += " bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-300";
+            }
+
+            return (
             <div key={prop.id} className="bg-white rounded-lg overflow-hidden shadow-md border-2 border-gray-300 hover:shadow-xl hover:border-blue-500 hover:ring-2 hover:ring-blue-500 transition-all duration-300 flex flex-col w-full max-w-[280px]">
               {/* Property Image */}
               <div className="h-36 w-full bg-gray-200 relative border-b-2 border-gray-200">
@@ -116,14 +134,14 @@ export default function Home() {
                 <div className="mt-auto">
                   <Link
                     href={`/properties/${prop.id}`}
-                    className="block w-full text-center bg-[#2563eb] hover:bg-[#1d4ed8] text-white py-2 rounded text-xs font-bold tracking-wider uppercase transition-colors shadow-sm"
+                    className={buttonClasses}
                   >
                     Property Trades
                   </Link>
                 </div>
               </div>
             </div>
-          ))}
+          )})}
         </div>
 
         {/* Empty State */}
