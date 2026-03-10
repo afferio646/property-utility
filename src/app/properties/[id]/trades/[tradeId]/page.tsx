@@ -164,11 +164,17 @@ export default function TradeDetailView() {
         <div className="bg-[#151b2b] p-3 border-b border-gray-800 shrink-0 shadow-inner">
           <form onSubmit={handleAddPhoto} className="flex flex-col sm:flex-row gap-2 max-w-4xl mx-auto">
             <input
-              type="url"
-              placeholder="Paste image URL here to create a new task card..."
-              className="flex-1 bg-[#0b101e] border border-gray-600 text-white p-2 text-xs rounded shadow-inner focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
-              value={newPhotoUrl}
-              onChange={(e) => setNewPhotoUrl(e.target.value)}
+              type="file"
+              accept="image/*"
+              className="flex-1 bg-[#0b101e] border border-gray-600 text-gray-300 p-1.5 text-xs rounded shadow-inner focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:uppercase file:bg-gray-800 file:text-gray-300 hover:file:bg-gray-700 cursor-pointer"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  // Create a local object URL to display the image immediately
+                  const localUrl = URL.createObjectURL(file);
+                  setNewPhotoUrl(localUrl);
+                }
+              }}
               required
             />
             <div className="flex gap-2">
@@ -236,17 +242,22 @@ export default function TradeDetailView() {
 
                       {/* Hover Overlay with Add Photo Button */}
                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/photo:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 z-10 backdrop-blur-[1px]">
-                         <button
-                           onClick={() => {
-                             const url = window.prompt("Enter new image URL to add to this card:");
-                             if (url) alert("In a full app, this would append the photo to this task card.");
-                           }}
-                           className="bg-white/90 hover:bg-white text-gray-900 rounded-full p-2 shadow-lg hover:scale-110 transition-transform flex items-center justify-center"
+                         <label
+                           className="bg-white/90 hover:bg-white text-gray-900 rounded-full p-2 shadow-lg hover:scale-110 transition-transform flex items-center justify-center cursor-pointer"
                            title="Add additional photo"
                          >
+                           <input
+                             type="file"
+                             accept="image/*,capture=camera"
+                             className="hidden"
+                             onChange={(e) => {
+                               const file = e.target.files?.[0];
+                               if (file) alert("Photo selected: " + file.name + ". In a full app, this would append the photo to this task card.");
+                             }}
+                           />
                            <FaPlus size={10} />
-                         </button>
-                         <span className="text-[8px] font-bold text-white uppercase tracking-wider">Add Photo</span>
+                         </label>
+                         <span className="text-[8px] font-bold text-white uppercase tracking-wider pointer-events-none">Add Photo</span>
                       </div>
                     </div>
 
