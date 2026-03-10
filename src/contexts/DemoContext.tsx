@@ -70,10 +70,10 @@ const initialProperties: Property[] = [
 ];
 
 const mockPhotoUrls = [
-  "https://placehold.co/400x400/eeeeee/666666/png?text=Photo+1",
-  "https://placehold.co/400x400/eeeeee/666666/png?text=Photo+2",
-  "https://placehold.co/400x400/eeeeee/666666/png?text=Photo+3",
-  "https://placehold.co/400x400/eeeeee/666666/png?text=Photo+4",
+  "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800&h=600", // Plumbing pipes
+  "https://images.unsplash.com/photo-1542013936693-884638332954?auto=format&fit=crop&q=80&w=800&h=600", // Plumbing under sink
+  "https://images.unsplash.com/photo-1505798577917-a65157d3320a?auto=format&fit=crop&q=80&w=800&h=600", // Finished sink/bathroom
+  "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=800&h=600", // Electrical panel
 ];
 
 const initialPhotos: Photo[] = [
@@ -84,7 +84,8 @@ const initialPhotos: Photo[] = [
     url: mockPhotoUrls[0],
     status: "Work to be Done",
     notes: [
-      { id: "n1", text: "Check water pressure", completed: false, completedDate: null, authorId: "user1" }
+      { id: "n1", text: "Check main water valve for leaks", completed: false, completedDate: null, authorId: "user1" },
+      { id: "n1b", text: "Replace corroded copper section", completed: false, completedDate: null, authorId: "user1" }
     ]
   },
   {
@@ -93,7 +94,10 @@ const initialPhotos: Photo[] = [
     trade: "plumbing",
     url: mockPhotoUrls[1],
     status: "Work Started",
-    notes: []
+    notes: [
+      { id: "n2a", text: "Remove old trap", completed: true, completedDate: new Date().toISOString(), authorId: "user1" },
+      { id: "n2b", text: "Install new PVC piping", completed: false, completedDate: null, authorId: "user1" }
+    ]
   },
   {
     id: "p3",
@@ -102,7 +106,8 @@ const initialPhotos: Photo[] = [
     url: mockPhotoUrls[2],
     status: "Work Completed",
     notes: [
-      { id: "n2", text: "Installed new sink", completed: true, completedDate: new Date().toISOString(), authorId: "user1" }
+      { id: "n3a", text: "Installed new sink and faucet", completed: true, completedDate: new Date().toISOString(), authorId: "user1" },
+      { id: "n3b", text: "Tested for leaks - passed", completed: true, completedDate: new Date().toISOString(), authorId: "user1" }
     ]
   },
   {
@@ -111,7 +116,10 @@ const initialPhotos: Photo[] = [
     trade: "electric",
     url: mockPhotoUrls[3],
     status: "Work to be Done",
-    notes: []
+    notes: [
+      { id: "n4a", text: "Label breaker box", completed: false, completedDate: null, authorId: "user1" },
+      { id: "n4b", text: "Run new 220v line for dryer", completed: false, completedDate: null, authorId: "user1" }
+    ]
   }
 ];
 
