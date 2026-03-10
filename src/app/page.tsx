@@ -85,8 +85,23 @@ export default function Home() {
         </header>
 
         {/* Section Subtitle */}
-        <div className="mb-6 border-b border-gray-800 pb-2">
+        <div className="mb-6 border-b border-gray-800 pb-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Properties</h2>
+
+          <div className="flex flex-wrap items-center gap-6">
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-4 rounded-full bg-[#2563eb] border-2 border-white shadow-sm block"></span>
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">No Active Trades</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-4 rounded-full bg-gray-700 border-2 border-white shadow-sm block"></span>
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Active Trades</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-4 rounded-full bg-green-600 border-2 border-white shadow-sm block"></span>
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Trades Completed</span>
+            </div>
+          </div>
         </div>
 
         {/* Properties Grid */}
@@ -100,13 +115,13 @@ export default function Home() {
               status = allCompleted ? 'completed' : 'active';
             }
 
-            let buttonClasses = "block w-full text-center py-2 rounded text-xs font-bold tracking-wider uppercase transition-colors shadow-sm";
+            let buttonClasses = "block w-full text-center py-2 rounded text-xs font-bold tracking-wider uppercase transition-colors shadow-sm border border-transparent";
             if (status === 'completed') {
-              buttonClasses += " bg-green-600 hover:bg-green-700 text-white";
+              buttonClasses += " bg-green-600 hover:bg-green-700 text-white border-white";
             } else if (status === 'active') {
-              buttonClasses += " bg-gray-700 hover:bg-gray-800 text-white";
+              buttonClasses += " bg-gray-700 hover:bg-gray-800 text-white border-white";
             } else {
-              buttonClasses += " bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-300";
+              buttonClasses += " bg-[#2563eb] hover:bg-[#1d4ed8] text-white border-white";
             }
 
             return (
