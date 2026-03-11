@@ -12,7 +12,8 @@ import {
   FaTrash,
   FaPencilAlt,
   FaPlus,
-  FaFileInvoice
+  FaFileInvoice,
+  FaExclamationTriangle
 } from "react-icons/fa";
 
 export default function TradeDetailView() {
@@ -23,6 +24,7 @@ export default function TradeDetailView() {
     addPhoto,
     updatePhotoStatus,
     deletePhoto,
+    toggleAlert,
     addNote,
     toggleNote,
     deleteNote,
@@ -60,6 +62,7 @@ export default function TradeDetailView() {
 
   // Track new note text per photo card
   const [newNotes, setNewNotes] = useState<{ [key: string]: string }>({});
+  const [alertNotes, setAlertNotes] = useState<{ [key: string]: string }>({});
 
   // Editing state: { photoId: string, noteId: string } or null
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
@@ -225,7 +228,7 @@ export default function TradeDetailView() {
               }
 
               return (
-                <div key={photo.id} className="bg-gradient-to-b from-gray-200 to-gray-400 p-[2px] rounded-lg shadow-sm hover:shadow-md transition-all duration-200 group/taskcard relative">
+                <div key={photo.id} className={`p-[2px] rounded-lg shadow-sm hover:shadow-md transition-all duration-200 group/taskcard relative ${photo.hasAlert ? "bg-gradient-to-b from-red-500 to-red-700 animate-pulse-slow" : "bg-gradient-to-b from-gray-200 to-gray-400"}`}>
                   <div className="bg-gradient-to-b from-white to-gray-50 rounded-md overflow-hidden flex flex-col p-2 h-full relative border border-white/60">
                     {userRole === "manager" && (
                       <button
@@ -362,6 +365,45 @@ export default function TradeDetailView() {
                           ))}
                         </div>
                       )}
+
+                      {/* ALERTS SECTION (Bottom Left of Content) */}
+                      <div className="mt-2 flex flex-col gap-1">
+                        {!photo.hasAlert ? (
+                          <div className="flex gap-1 items-center max-w-sm">
+                            <input
+                              type="text"
+                              placeholder="Type alert reason here..."
+                              value={alertNotes[photo.id] || ""}
+                              onChange={(e) => setAlertNotes({ ...alertNotes, [photo.id]: e.target.value })}
+                              className="bg-red-50/50 border border-red-200 text-gray-800 text-[11px] px-1.5 py-1 rounded flex-1 focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-400"
+                            />
+                            <button
+                              onClick={() => {
+                                toggleAlert(photo.id, alertNotes[photo.id] || "Contractor initiated an alert for this task.");
+                                setAlertNotes({ ...alertNotes, [photo.id]: "" }); // clear after alert
+                              }}
+                              className="bg-gray-200 hover:bg-red-100 text-gray-700 hover:text-red-600 border border-gray-300 px-2 py-1 rounded text-[10px] font-bold tracking-wider uppercase flex items-center gap-1 transition-all"
+                            >
+                              <FaExclamationTriangle size={10} />
+                              Alert
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="bg-red-100 border-l-2 border-red-500 p-1.5 rounded flex justify-between items-start gap-2 max-w-sm">
+                            <div className="text-[10px] text-red-800 font-medium">
+                              <span className="font-bold uppercase text-[9px] block text-red-600 mb-0.5">Active Alert</span>
+                              {photo.alertNote}
+                            </div>
+                            <button
+                              onClick={() => toggleAlert(photo.id)}
+                              className="bg-red-600 hover:bg-red-500 text-white px-2 py-0.5 rounded text-[9px] font-bold tracking-wider uppercase shrink-0 shadow-sm transition-colors"
+                            >
+                              Resolve
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
                     </div>
 
                     {/* Far Right: Work Status Dropdown & Tasks Counter */}
