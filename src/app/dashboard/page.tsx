@@ -2,6 +2,7 @@
 
 import { useDemo, User } from "@/contexts/DemoContext";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { FaArrowLeft, FaExclamationTriangle } from "react-icons/fa";
 
 export default function Dashboard() {
@@ -82,8 +83,6 @@ export default function Dashboard() {
               // Find contractors who selected this trade (or have no trades selected yet for backward compatibility)
               const tradeContractors = contractors.filter(c => c.trades?.includes(trade) || (!c.trades && trade === "plumbing")); // default legacy users to plumbing
 
-              if (tradeContractors.length === 0) return null;
-
               return (
                 <div key={trade} className="overflow-hidden border border-[#4b5563] rounded-lg">
                   <div className="bg-[#4b5563] p-3 border-b border-[#374151]">
@@ -93,16 +92,23 @@ export default function Dashboard() {
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="bg-[#111827]">
-                          <th className="p-3 text-xs uppercase text-[#9ca3af] font-semibold">Contractor Name</th>
-                          <th className="p-3 text-xs uppercase text-[#9ca3af] font-semibold">Company</th>
-                          <th className="p-3 text-xs uppercase text-[#9ca3af] font-semibold">Email</th>
-                          <th className="p-3 text-xs uppercase text-[#9ca3af] font-semibold text-center">Alert Status</th>
+                          <th className="p-3 text-xs uppercase text-[#9ca3af] font-semibold w-1/4">Contractor Name</th>
+                          <th className="p-3 text-xs uppercase text-[#9ca3af] font-semibold w-1/4">Company</th>
+                          <th className="p-3 text-xs uppercase text-[#9ca3af] font-semibold w-1/4">Email</th>
+                          <th className="p-3 text-xs uppercase text-[#9ca3af] font-semibold text-center w-1/4">Alert Status</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {tradeContractors.map(c => {
+                        {tradeContractors.length === 0 ? (
+                          <tr>
+                            <td colSpan={4} className="p-4 text-center text-[#9ca3af] italic bg-[#374151]/50">
+                              No contractors assigned to this trade yet.
+                            </td>
+                          </tr>
+                        ) : tradeContractors.map(c => {
                           // Check if this contractor has any active alerts anywhere in the system
-                          const hasActiveAlert = photos.some(p => p.hasAlert && p.contractorId === c.id);
+                          const activeAlertPhoto = photos.find(p => p.hasAlert && p.contractorId === c.id);
+                          const hasActiveAlert = !!activeAlertPhoto;
 
                           return (
                             <tr key={c.id} className={`border-b border-[#4b5563] last:border-0 transition ${hasActiveAlert ? "bg-red-900/20" : "hover:bg-[#4b5563]/30"}`}>
@@ -111,10 +117,14 @@ export default function Dashboard() {
                               <td className="p-3 text-sm text-[#9ca3af]">{c.email}</td>
                               <td className="p-3 text-center">
                                 {hasActiveAlert ? (
-                                  <span className="inline-flex items-center justify-center gap-1 px-2 py-1 bg-red-600 text-white rounded text-xs font-bold border border-red-500 shadow-[0_0_10px_rgba(220,38,38,0.7)] animate-pulse">
-                                    <FaExclamationTriangle size={10} />
-                                    ALERT ACTIVE
-                                  </span>
+                                  <Link
+                                    href={`/properties/${activeAlertPhoto.propertyId}/trades/${activeAlertPhoto.trade}`}
+                                    className="inline-flex items-center justify-center gap-1 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded text-xs font-bold border border-red-500 shadow-[0_0_15px_rgba(220,38,38,0.7)] transition-all animate-pulse hover:scale-105"
+                                    title="Click to view the specific alert in the trade page"
+                                  >
+                                    <FaExclamationTriangle size={12} />
+                                    VIEW ALERT
+                                  </Link>
                                 ) : (
                                   <span className="inline-block px-2 py-1 bg-[#10b981]/20 text-[#10b981] rounded text-xs font-bold border border-[#10b981]/50">
                                     CLEAR

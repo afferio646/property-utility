@@ -153,10 +153,10 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
   const [properties, setProperties] = useState<Property[]>(initialProperties);
   const [photos, setPhotos] = useState<Photo[]>(initialPhotos);
 
-  const addUser = (name: string, email: string, company: string, role: UserRole) => {
-    const newUser: User = { id: Date.now().toString(), name, email, company, role };
+  const addUser = (name: string, email: string, company: string, role: UserRole, trades?: TradeType[]) => {
+    const newUser: User = { id: Date.now().toString(), name, email, company, role, trades: trades || [] };
     setUsers([...users, newUser]);
-    if (!currentUser) {
+    if (true) {
         setCurrentUser(newUser);
         setUserRole(role);
     }

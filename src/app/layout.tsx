@@ -28,6 +28,7 @@ export const viewport: Viewport = {
 
 import { DemoProvider } from "@/contexts/DemoContext";
 import SignUpModal from "./SignUpModal";
+import RoleSwitcher from "./RoleSwitcher";
 import ManageUsersModal from "./ManageUsersModal";
 
 export default function RootLayout({
@@ -45,6 +46,7 @@ export default function RootLayout({
             {children}
           </main>
           <SignUpModal />
+          <RoleSwitcher />
           <ManageUsersModal />
         </DemoProvider>
       </body>

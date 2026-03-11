@@ -15,7 +15,8 @@ import {
   FaLayerGroup,
   FaTools,
   FaArrowLeft,
-  FaPlus
+  FaPlus,
+  FaExclamationTriangle
 } from "react-icons/fa";
 
 interface TradeIconProps {
@@ -127,15 +128,20 @@ export default function PropertyTrades() {
             const tradePhotos = photos.filter(p => p.propertyId === id && p.trade === trade.type);
             const hasPhotos = tradePhotos.length > 0;
             const allCompleted = hasPhotos && tradePhotos.every(p => p.status === 'Work Completed');
+            const hasActiveAlert = tradePhotos.some(p => p.hasAlert);
 
             const isActive = hasPhotos && !allCompleted;
             const isCompleted = allCompleted;
 
             let buttonStyles = "w-full rounded-xl flex flex-col items-center justify-center h-24 transition-all duration-200 relative overflow-hidden group-hover:-translate-y-1 group-hover:shadow-[0_8px_16px_rgba(0,0,0,0.3)] max-w-[180px]";
             let iconStyles = "mb-2 transition-transform group-hover:scale-110 z-10 relative";
-            let textStyles = "text-[10px] font-bold tracking-widest uppercase z-10 relative leading-tight";
+            let textStyles = "text-[10px] font-bold tracking-widest uppercase z-10 relative leading-tight text-center px-1";
 
-            if (isCompleted) {
+            if (hasActiveAlert) {
+              buttonStyles += " bg-gradient-to-b from-red-600 to-red-800 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_0_15px_rgba(239,68,68,0.8)] border border-red-500 animate-pulse";
+              iconStyles += " text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] animate-bounce";
+              textStyles += " text-white drop-shadow-md";
+            } else if (isCompleted) {
               buttonStyles += " bg-gradient-to-b from-green-400 to-green-600 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_4px_10px_rgba(34,197,94,0.3)] border border-green-500";
               iconStyles += " text-white drop-shadow-md";
               textStyles += " text-white drop-shadow-md";
@@ -153,8 +159,13 @@ export default function PropertyTrades() {
               <Link
                 href={`/properties/${id}/trades/${trade.type}`}
                 key={trade.type}
-                className="block group w-full max-w-[180px]"
+                className="block group w-full max-w-[180px] relative"
               >
+                {hasActiveAlert && (
+                  <div className="absolute -top-2 -right-2 z-20 bg-red-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-[0_0_10px_rgba(220,38,38,0.8)] border border-red-400 flex items-center gap-1">
+                    <FaExclamationTriangle size={8} /> ALERT
+                  </div>
+                )}
                 <div className={buttonStyles}>
                   {/* Top gloss reflection for 3D effect */}
                   <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-white/30 to-transparent pointer-events-none rounded-t-xl opacity-70"></div>

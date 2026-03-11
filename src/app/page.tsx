@@ -84,15 +84,7 @@ export default function Home() {
           <div className="flex items-center gap-2 mt-4 sm:mt-0 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0">
             {userRole === "manager" && (
               <>
-                {photos.some(p => p.hasAlert) && (
-                  <button
-                    onClick={() => window.location.href = '/dashboard'}
-                    className="flex items-center justify-center gap-1.5 bg-red-600 hover:bg-red-500 transition-colors px-3 py-1.5 rounded text-[10px] font-bold tracking-wider uppercase text-white shadow-[0_0_15px_rgba(220,38,38,0.8)] border border-red-400 animate-pulse whitespace-nowrap"
-                  >
-                    <FaExclamationTriangle size={12} />
-                    SYSTEM ALERTS
-                  </button>
-                )}
+
                 <button
                   onClick={() => setShowAddForm(true)}
                   className="flex items-center gap-1.5 bg-transparent border border-gray-600 hover:border-gray-400 text-gray-300 hover:text-white px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors whitespace-nowrap"
@@ -163,7 +155,17 @@ export default function Home() {
             }
 
             return (
-            <div key={prop.id} className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-300 hover:shadow-md hover:border-blue-500 transition-all duration-200 flex flex-col w-full max-w-[180px] relative group/card">
+            <div key={prop.id} className={`bg-white rounded-md overflow-hidden shadow-sm border transition-all duration-200 flex flex-col w-full max-w-[180px] relative group/card ${
+              photos.some(p => p.propertyId === prop.id && p.hasAlert)
+                ? "border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.6)] animate-pulse"
+                : "border-gray-300 hover:shadow-md hover:border-blue-500"
+            }`}>
+              {/* Alert Badge Overlay */}
+              {photos.some(p => p.propertyId === prop.id && p.hasAlert) && (
+                <div className="absolute top-2 left-2 z-20 bg-red-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-md flex items-center gap-1">
+                  <FaExclamationTriangle size={8} /> ALERT
+                </div>
+              )}
               {userRole === "manager" && (
                 <button
                   onClick={(e) => {
