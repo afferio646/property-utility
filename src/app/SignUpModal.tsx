@@ -15,6 +15,9 @@ function SignUpModalContent() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
+  const [selectedTrades, setSelectedTrades] = useState<string[]>([]);
+
+  const allTrades = ["plumbing", "electrical", "hvac", "roofing", "drywall", "painting", "flooring", "landscaping"];
   const [step, setStep] = useState(1); // 1 = form, 2 = upload app
 
   useEffect(() => {
@@ -47,8 +50,16 @@ function SignUpModalContent() {
 
     // Default role if opened manually
     const finalRole = role !== "none" ? role : "manager";
-    addUser(name, email, company, finalRole);
+    addUser(name, email, company, finalRole, selectedTrades as any[]);
     setStep(2);
+  };
+
+  const toggleTrade = (trade: string) => {
+    if (selectedTrades.includes(trade)) {
+      setSelectedTrades(selectedTrades.filter(t => t !== trade));
+    } else {
+      setSelectedTrades([...selectedTrades, trade]);
+    }
   };
 
   const handleInstall = async () => {
@@ -113,6 +124,28 @@ function SignUpModalContent() {
                   placeholder="ACME Corp"
                 />
               </div>
+
+              {(role === "technician" || role === "none") && (
+                <div className="pt-2 border-t border-gray-200 mt-4">
+                  <label className="block text-sm font-bold text-blue-600 mb-2">Select Your Trade Categories (Contractors Only)</label>
+                  <div className="flex flex-wrap gap-2">
+                    {allTrades.map(trade => (
+                      <button
+                        key={trade}
+                        type="button"
+                        onClick={() => toggleTrade(trade)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase transition-colors border ${
+                          selectedTrades.includes(trade)
+                            ? 'bg-blue-600 text-white border-blue-500 shadow-md'
+                            : 'bg-gray-100 text-gray-600 border-gray-300 hover:border-gray-400'
+                        }`}
+                      >
+                        {trade}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               {role === "none" && (
                  <div>
                  <label className="block text-sm font-medium mb-1">Select Role</label>

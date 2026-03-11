@@ -11,6 +11,7 @@ export interface User {
   email: string;
   company: string;
   role: UserRole;
+  trades?: TradeType[]; // Specific to technicians/contractors
 }
 
 
@@ -35,6 +36,9 @@ export interface Photo {
   status: PhotoStatus;
   timestamp?: string;
   notes: Note[];
+  hasAlert?: boolean;
+  alertNote?: string;
+  contractorId?: string; // Who raised the alert
 }
 
 export interface CustomTrade {
@@ -57,7 +61,7 @@ interface DemoContextType {
   currentUser: User | null;
   setCurrentUser: (user: User | null) => void;
   users: User[];
-  addUser: (name: string, email: string, company: string, role: UserRole) => void;
+  addUser: (name: string, email: string, company: string, role: UserRole, trades?: TradeType[]) => void;
   userRole: UserRole;
   setUserRole: (role: UserRole) => void;
   updatePropertyName: (propertyId: string, name: string) => void;
@@ -69,6 +73,7 @@ interface DemoContextType {
   addPhoto: (propertyId: string, trade: TradeType, url: string) => void;
   deletePhoto: (photoId: string) => void;
   updatePhotoStatus: (photoId: string, status: PhotoStatus) => void;
+  toggleAlert: (photoId: string, note?: string) => void;
   addNote: (photoId: string, text: string) => void;
   toggleNote: (photoId: string, noteId: string) => void;
   deleteNote: (photoId: string, noteId: string) => void;
@@ -213,6 +218,20 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
     setPhotos(photos.map(p => p.id === photoId ? { ...p, status } : p));
   };
 
+  const toggleAlert = (photoId: string, note?: string) => {
+    setPhotos(photos.map(p => {
+      if (p.id === photoId) {
+        return {
+          ...p,
+          hasAlert: !p.hasAlert,
+          alertNote: !p.hasAlert ? (note || "Alert triggered") : undefined,
+          contractorId: !p.hasAlert && currentUser ? currentUser.id : undefined
+        };
+      }
+      return p;
+    }));
+  };
+
   const addNote = (photoId: string, text: string) => {
     const newNote: Note = {
       id: Date.now().toString(),
@@ -294,6 +313,7 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
         addPhoto,
         deletePhoto,
         updatePhotoStatus,
+        toggleAlert,
         addNote,
         toggleNote,
         deleteNote,
