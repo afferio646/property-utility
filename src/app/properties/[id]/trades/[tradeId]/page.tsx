@@ -25,6 +25,8 @@ export default function TradeDetailView() {
     updatePhotoStatus,
     deletePhoto,
     toggleAlert,
+    submitAlertAnswer,
+    resetAlert,
     addNote,
     toggleNote,
     deleteNote,
@@ -63,6 +65,7 @@ export default function TradeDetailView() {
   // Track new note text per photo card
   const [newNotes, setNewNotes] = useState<{ [key: string]: string }>({});
   const [alertNotes, setAlertNotes] = useState<{ [key: string]: string }>({});
+  const [answerNotes, setAnswerNotes] = useState<{ [key: string]: string }>({});
 
   // Editing state: { photoId: string, noteId: string } or null
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
@@ -367,7 +370,7 @@ export default function TradeDetailView() {
                       )}
 
                       {/* ALERTS SECTION (Bottom Left of Content) */}
-                      <div className="mt-2 flex flex-col gap-1">
+                      <div className="mt-2 flex flex-col gap-1.5">
                         {!photo.hasAlert ? (
                           <div className="flex gap-1 items-center max-w-sm">
                             <input
@@ -380,7 +383,7 @@ export default function TradeDetailView() {
                             <button
                               onClick={() => {
                                 toggleAlert(photo.id, alertNotes[photo.id] || "Contractor initiated an alert for this task.");
-                                setAlertNotes({ ...alertNotes, [photo.id]: "" }); // clear after alert
+                                setAlertNotes({ ...alertNotes, [photo.id]: "" });
                               }}
                               className="bg-gray-200 hover:bg-red-100 text-gray-700 hover:text-red-600 border border-gray-300 px-2 py-1 rounded text-[10px] font-bold tracking-wider uppercase flex items-center gap-1 transition-all"
                             >
@@ -389,16 +392,48 @@ export default function TradeDetailView() {
                             </button>
                           </div>
                         ) : (
-                          <div className="bg-red-100 border-l-2 border-red-500 p-1.5 rounded flex justify-between items-start gap-2 max-w-sm">
-                            <div className="text-[10px] text-red-800 font-medium">
+                          <div className="flex flex-col gap-1 max-w-sm">
+                            {/* Contractor Alert Display */}
+                            <div className="bg-red-100 border-l-2 border-red-500 p-1.5 rounded flex flex-col justify-start">
                               <span className="font-bold uppercase text-[9px] block text-red-600 mb-0.5">Active Alert</span>
-                              {photo.alertNote}
+                              <div className="text-[10px] text-red-800 font-medium">{photo.alertNote}</div>
                             </div>
+
+                            {/* Manager Answer Display or Input */}
+                            {photo.hasAnswer ? (
+                              <div className="bg-green-100 border-l-2 border-green-500 p-1.5 rounded flex flex-col justify-start">
+                                <span className="font-bold uppercase text-[9px] block text-green-600 mb-0.5">Manager Answer</span>
+                                <div className="text-[10px] text-green-800 font-medium">{photo.managerAnswer}</div>
+                              </div>
+                            ) : (
+                              userRole === "manager" && (
+                                <div className="flex gap-1 items-center">
+                                  <input
+                                    type="text"
+                                    placeholder="Type answer to contractor..."
+                                    value={answerNotes[photo.id] || ""}
+                                    onChange={(e) => setAnswerNotes({ ...answerNotes, [photo.id]: e.target.value })}
+                                    className="bg-green-50/50 border border-green-200 text-gray-800 text-[11px] px-1.5 py-1 rounded flex-1 focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-400"
+                                  />
+                                  <button
+                                    onClick={() => {
+                                      submitAlertAnswer(photo.id, answerNotes[photo.id] || "Alert resolved by manager.");
+                                      setAnswerNotes({ ...answerNotes, [photo.id]: "" });
+                                    }}
+                                    className="bg-green-600 hover:bg-green-500 text-white px-2 py-1 rounded text-[10px] font-bold tracking-wider uppercase transition-colors shadow-sm"
+                                  >
+                                    Answer
+                                  </button>
+                                </div>
+                              )
+                            )}
+
+                            {/* Reset Button (Bottom) */}
                             <button
-                              onClick={() => toggleAlert(photo.id)}
-                              className="bg-red-600 hover:bg-red-500 text-white px-2 py-0.5 rounded text-[9px] font-bold tracking-wider uppercase shrink-0 shadow-sm transition-colors"
+                              onClick={() => resetAlert(photo.id)}
+                              className="mt-1 self-start text-[9px] font-bold text-gray-500 hover:text-gray-700 uppercase tracking-wider underline decoration-gray-400 underline-offset-2 transition-colors"
                             >
-                              Resolve
+                              Reset Alert
                             </button>
                           </div>
                         )}

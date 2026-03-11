@@ -3,11 +3,11 @@
 import { useState, useRef } from "react";
 import { useDemo } from "@/contexts/DemoContext";
 import Link from "next/link";
-import { FaPlus, FaCamera, FaImage, FaTrash, FaExclamationTriangle } from "react-icons/fa";
+import { FaPlus, FaCamera, FaImage, FaTrash, FaExclamationTriangle, FaTools } from "react-icons/fa";
 import Image from "next/image";
 
 export default function Home() {
-  const { properties, addProperty, deleteProperty, userRole, photos, updatePropertyName } = useDemo();
+  const { properties, addProperty, deleteProperty, userRole, photos, updatePropertyName, currentUser } = useDemo();
 
   // Modal State
   const [showAddForm, setShowAddForm] = useState(false);
@@ -82,9 +82,23 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-2 mt-4 sm:mt-0 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0">
+            {/* Global Notification for Contractor when Manager Answers */}
+            {userRole === "technician" && photos.some(p => p.hasAnswer && p.contractorId === currentUser?.id) && (
+              <div className="flex items-center justify-center bg-green-600 px-3 py-1.5 rounded text-[10px] font-bold tracking-wider uppercase text-white shadow-[0_0_15px_rgba(34,197,94,0.8)] border border-green-400 animate-pulse whitespace-nowrap cursor-default">
+                ANSWER RECEIVED
+              </div>
+            )}
+
             {userRole === "manager" && (
               <>
 
+                <button
+                  onClick={() => window.location.href = '/dashboard'}
+                  className="flex items-center gap-1.5 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 border border-gray-600 px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors whitespace-nowrap shadow-inner"
+                  title="Open Admin Dashboard"
+                >
+                  <FaTools size={10} /> Dashboard
+                </button>
                 <button
                   onClick={() => setShowAddForm(true)}
                   className="flex items-center gap-1.5 bg-transparent border border-gray-600 hover:border-gray-400 text-gray-300 hover:text-white px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors whitespace-nowrap"

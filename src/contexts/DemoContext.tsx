@@ -39,6 +39,8 @@ export interface Photo {
   hasAlert?: boolean;
   alertNote?: string;
   contractorId?: string; // Who raised the alert
+  hasAnswer?: boolean;
+  managerAnswer?: string;
 }
 
 export interface CustomTrade {
@@ -74,6 +76,8 @@ interface DemoContextType {
   deletePhoto: (photoId: string) => void;
   updatePhotoStatus: (photoId: string, status: PhotoStatus) => void;
   toggleAlert: (photoId: string, note?: string) => void;
+  submitAlertAnswer: (photoId: string, answer: string) => void;
+  resetAlert: (photoId: string) => void;
   addNote: (photoId: string, text: string) => void;
   toggleNote: (photoId: string, noteId: string) => void;
   deleteNote: (photoId: string, noteId: string) => void;
@@ -221,11 +225,43 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
   const toggleAlert = (photoId: string, note?: string) => {
     setPhotos(photos.map(p => {
       if (p.id === photoId) {
+        // Now acts strictly as "create alert"
         return {
           ...p,
-          hasAlert: !p.hasAlert,
-          alertNote: !p.hasAlert ? (note || "Alert triggered") : undefined,
-          contractorId: !p.hasAlert && currentUser ? currentUser.id : undefined
+          hasAlert: true,
+          alertNote: note || "Alert triggered",
+          contractorId: currentUser ? currentUser.id : undefined,
+          hasAnswer: false,
+          managerAnswer: undefined
+        };
+      }
+      return p;
+    }));
+  };
+
+  const submitAlertAnswer = (photoId: string, answer: string) => {
+    setPhotos(photos.map(p => {
+      if (p.id === photoId) {
+        return {
+          ...p,
+          hasAnswer: true,
+          managerAnswer: answer
+        };
+      }
+      return p;
+    }));
+  };
+
+  const resetAlert = (photoId: string) => {
+    setPhotos(photos.map(p => {
+      if (p.id === photoId) {
+        return {
+          ...p,
+          hasAlert: false,
+          alertNote: undefined,
+          contractorId: undefined,
+          hasAnswer: false,
+          managerAnswer: undefined
         };
       }
       return p;
@@ -314,6 +350,8 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
         deletePhoto,
         updatePhotoStatus,
         toggleAlert,
+        submitAlertAnswer,
+        resetAlert,
         addNote,
         toggleNote,
         deleteNote,
