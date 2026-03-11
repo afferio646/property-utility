@@ -22,6 +22,7 @@ export default function TradeDetailView() {
     photos,
     addPhoto,
     updatePhotoStatus,
+    deletePhoto,
     addNote,
     toggleNote,
     deleteNote,
@@ -224,8 +225,22 @@ export default function TradeDetailView() {
               }
 
               return (
-                <div key={photo.id} className="bg-gradient-to-b from-gray-200 to-gray-400 p-[2px] rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                <div key={photo.id} className="bg-gradient-to-b from-gray-200 to-gray-400 p-[2px] rounded-lg shadow-sm hover:shadow-md transition-all duration-200 group/taskcard relative">
                   <div className="bg-gradient-to-b from-white to-gray-50 rounded-md overflow-hidden flex flex-col p-2 h-full relative border border-white/60">
+                    {userRole === "manager" && (
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (confirm("Are you sure you want to delete this entire task card?")) {
+                            deletePhoto(photo.id);
+                          }
+                        }}
+                        className="absolute top-2 right-2 z-30 bg-black/60 hover:bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover/taskcard:opacity-100 transition-all shadow-md backdrop-blur-sm"
+                        title="Delete Task Card"
+                      >
+                        <FaTrash size={10} />
+                      </button>
+                    )}
 
                     {/* Far Left: Small Picture Thumbnail */}
                     <div className="h-40 w-full rounded overflow-hidden bg-gray-200 shrink-0 mb-3 border border-gray-300 shadow-inner relative group/photo">

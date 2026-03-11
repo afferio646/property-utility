@@ -3,11 +3,11 @@
 import { useState, useRef } from "react";
 import { useDemo } from "@/contexts/DemoContext";
 import Link from "next/link";
-import { FaPlus, FaCamera, FaImage } from "react-icons/fa";
+import { FaPlus, FaCamera, FaImage, FaTrash } from "react-icons/fa";
 import Image from "next/image";
 
 export default function Home() {
-  const { properties, addProperty, userRole, photos, updatePropertyName } = useDemo();
+  const { properties, addProperty, deleteProperty, userRole, photos, updatePropertyName } = useDemo();
 
   // Modal State
   const [showAddForm, setShowAddForm] = useState(false);
@@ -154,7 +154,22 @@ export default function Home() {
             }
 
             return (
-            <div key={prop.id} className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-300 hover:shadow-md hover:border-blue-500 transition-all duration-200 flex flex-col w-full max-w-[180px]">
+            <div key={prop.id} className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-300 hover:shadow-md hover:border-blue-500 transition-all duration-200 flex flex-col w-full max-w-[180px] relative group/card">
+              {userRole === "manager" && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault(); // prevent link navigation if it's wrapped in a link
+                    e.stopPropagation();
+                    if (confirm("Are you sure you want to delete this property and all of its associated task cards?")) {
+                      deleteProperty(prop.id);
+                    }
+                  }}
+                  className="absolute top-1.5 right-1.5 z-20 bg-black/60 hover:bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover/card:opacity-100 transition-all shadow-md backdrop-blur-sm"
+                  title="Delete Property"
+                >
+                  <FaTrash size={10} />
+                </button>
+              )}
               {/* Property Image */}
               <div className="h-24 sm:h-28 w-full bg-gray-200 relative border-b border-gray-200">
                 {prop.imageUrl ? (

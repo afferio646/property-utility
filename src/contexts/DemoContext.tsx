@@ -33,6 +33,7 @@ export interface Photo {
   trade: TradeType;
   url: string;
   status: PhotoStatus;
+  timestamp?: string;
   notes: Note[];
 }
 
@@ -62,9 +63,11 @@ interface DemoContextType {
   updatePropertyName: (propertyId: string, name: string) => void;
   properties: Property[];
   addProperty: (name: string, address?: string, imageUrl?: string) => void;
+  deleteProperty: (propertyId: string) => void;
   addCustomTrade: (propertyId: string, label: string) => void;
   photos: Photo[];
   addPhoto: (propertyId: string, trade: TradeType, url: string) => void;
+  deletePhoto: (photoId: string) => void;
   updatePhotoStatus: (photoId: string, status: PhotoStatus) => void;
   addNote: (photoId: string, text: string) => void;
   toggleNote: (photoId: string, noteId: string) => void;
@@ -170,16 +173,24 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
   };
 
 
-  const addProperty = (name: string, address = "", imageUrl = "") => {
+  const addProperty = (name: string, address?: string, imageUrl?: string) => {
     const newProp: Property = {
       id: Date.now().toString(),
       name,
-      address,
-      imageUrl,
+      address: address || "",
       createdAt: new Date().toISOString(),
+      imageUrl,
+      customTrades: []
     };
     setProperties([...properties, newProp]);
   };
+
+  const deleteProperty = (propertyId: string) => {
+    setProperties(properties.filter(p => p.id !== propertyId));
+    // Also delete associated photos to keep state clean
+    setPhotos(photos.filter(p => p.propertyId !== propertyId));
+  };
+
 
   const addPhoto = (propertyId: string, trade: TradeType, url: string) => {
     const newPhoto: Photo = {
@@ -187,10 +198,15 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
       propertyId,
       trade,
       url,
-      status: "Need to Inspect",
+      timestamp: new Date().toISOString(),
       notes: [],
+      status: 'Need to Inspect'
     };
     setPhotos([...photos, newPhoto]);
+  };
+
+  const deletePhoto = (photoId: string) => {
+    setPhotos(photos.filter(p => p.id !== photoId));
   };
 
   const updatePhotoStatus = (photoId: string, status: PhotoStatus) => {
@@ -272,9 +288,11 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
         updatePropertyName,
         properties,
         addProperty,
+        deleteProperty,
         addCustomTrade,
         photos,
         addPhoto,
+        deletePhoto,
         updatePhotoStatus,
         addNote,
         toggleNote,
