@@ -206,7 +206,7 @@ export default function TradeDetailView() {
             <p className="text-gray-500 text-sm">Upload photos to start creating task checklists.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 items-start">
             {tradePhotos.map((photo) => {
               const completedNotes = photo.notes.filter(n => n.completed).length;
               const totalNotes = photo.notes.length;
@@ -249,7 +249,7 @@ export default function TradeDetailView() {
                     )}
 
                     {/* Far Left: Small Picture Thumbnail */}
-                    <div className="h-40 w-full rounded overflow-hidden bg-gray-200 shrink-0 mb-3 border border-gray-300 shadow-inner relative group/photo">
+                    <div className="h-24 sm:h-32 w-full rounded overflow-hidden bg-gray-200 shrink-0 mb-2 border border-gray-300 shadow-inner relative group/photo">
                       <Image
                         src={photo.url}
                         alt={`Task Photo`}
@@ -285,7 +285,7 @@ export default function TradeDetailView() {
                     {/* Center: Notes & Checkmarks */}
                     <div className="sm:ml-3 flex-1 flex flex-col gap-1.5 min-w-0 py-1">
                       {/* Add Note Form */}
-                      <form onSubmit={(e) => handleAddNote(e, photo.id)} className="flex gap-1.5 w-full max-w-sm">
+                      <form onSubmit={(e) => handleAddNote(e, photo.id)} className="flex gap-1.5 w-full">
                         <input
                           type="text"
                           placeholder="Add new task..."
@@ -372,7 +372,7 @@ export default function TradeDetailView() {
                       {/* ALERTS SECTION (Bottom Left of Content) */}
                       <div className="mt-2 flex flex-col gap-1.5">
                         {!photo.hasAlert ? (
-                          <div className="flex gap-1 items-center max-w-sm">
+                          <div className="flex gap-1 items-center w-full">
                             <input
                               type="text"
                               placeholder="Type alert reason here..."
@@ -392,7 +392,7 @@ export default function TradeDetailView() {
                             </button>
                           </div>
                         ) : (
-                          <div className="flex flex-col gap-1 max-w-sm">
+                          <div className="flex flex-col gap-1 w-full">
                             {/* Contractor Alert Display */}
                             <div className="bg-red-100 border-l-2 border-red-500 p-1.5 rounded flex flex-col justify-start">
                               <span className="font-bold uppercase text-[9px] block text-red-600 mb-0.5">Active Alert</span>
