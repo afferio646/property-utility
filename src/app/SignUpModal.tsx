@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 function SignUpModalContent() {
-  const { addUser } = useDemo();
+  const { addUser, properties } = useDemo();
   const searchParams = useSearchParams();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +17,7 @@ function SignUpModalContent() {
   const [phone, setPhone] = useState("");
   const [company, setCompany] = useState("");
   const [selectedTrades, setSelectedTrades] = useState<string[]>([]);
+  const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
 
   const allTrades = ["plumbing", "electric", "tile", "cabinets", "paint", "windows", "doors", "floors", "misc"];
   const [step, setStep] = useState(1); // 1 = form, 2 = upload app
@@ -51,8 +52,16 @@ function SignUpModalContent() {
 
     // Default role if opened manually
     const finalRole = role !== "none" ? role : "manager";
-    addUser(name, email, phone, company, finalRole, selectedTrades as string[]);
+    addUser(name, email, phone, company, finalRole, selectedTrades as string[], selectedProperties);
     setStep(2);
+  };
+
+  const toggleProperty = (propertyId: string) => {
+    if (selectedProperties.includes(propertyId)) {
+      setSelectedProperties(selectedProperties.filter(id => id !== propertyId));
+    } else {
+      setSelectedProperties([...selectedProperties, propertyId]);
+    }
   };
 
   const toggleTrade = (trade: string) => {
@@ -138,23 +147,44 @@ function SignUpModalContent() {
               </div>
 
               {(role === "technician" || role === "none") && (
-                <div className="pt-2 border-t border-gray-200 mt-4">
-                  <label className="block text-sm font-bold text-blue-600 mb-2">Select Your Trade Categories (Contractors Only)</label>
-                  <div className="flex flex-wrap gap-2">
-                    {allTrades.map(trade => (
-                      <button
-                        key={trade}
-                        type="button"
-                        onClick={() => toggleTrade(trade)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase transition-colors border ${
-                          selectedTrades.includes(trade)
-                            ? 'bg-blue-600 text-white border-blue-500 shadow-md'
-                            : 'bg-gray-100 text-gray-600 border-gray-300 hover:border-gray-400'
-                        }`}
-                      >
-                        {trade}
-                      </button>
-                    ))}
+                <div className="pt-2 border-t border-gray-200 mt-4 space-y-4">
+                  <div>
+                    <label className="block text-sm font-bold text-blue-600 mb-2">Select Your Trade Categories (Contractors Only)</label>
+                    <div className="flex flex-wrap gap-2">
+                      {allTrades.map(trade => (
+                        <button
+                          key={trade}
+                          type="button"
+                          onClick={() => toggleTrade(trade)}
+                          className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase transition-colors border ${
+                            selectedTrades.includes(trade)
+                              ? 'bg-blue-600 text-white border-blue-500 shadow-md'
+                              : 'bg-gray-100 text-gray-600 border-gray-300 hover:border-gray-400'
+                          }`}
+                        >
+                          {trade}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-blue-600 mb-2">Assigned Properties</label>
+                    <div className="flex flex-col gap-2 max-h-40 overflow-y-auto border border-gray-300 rounded p-2">
+                      {properties.map(prop => (
+                        <label key={prop.id} className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={selectedProperties.includes(prop.id)}
+                            onChange={() => toggleProperty(prop.id)}
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-gray-800">{prop.name}</span>
+                        </label>
+                      ))}
+                      {properties.length === 0 && (
+                        <p className="text-sm text-gray-500 italic">No properties available yet.</p>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
