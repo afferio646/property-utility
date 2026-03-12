@@ -92,13 +92,13 @@ export default function Home() {
             {userRole === "manager" && (
               <>
 
-                <button
-                  onClick={() => window.location.href = '/dashboard'}
+                <Link
+                  href="/dashboard"
                   className="flex items-center gap-1.5 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 border border-gray-600 px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors whitespace-nowrap shadow-inner"
                   title="Open Admin Dashboard"
                 >
                   <FaTools size={10} /> Dashboard
-                </button>
+                </Link>
                 <button
                   onClick={() => setShowAddForm(true)}
                   className="flex items-center gap-1.5 bg-transparent border border-gray-600 hover:border-gray-400 text-gray-300 hover:text-white px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors whitespace-nowrap"

@@ -17,7 +17,7 @@ function SignUpModalContent() {
   const [company, setCompany] = useState("");
   const [selectedTrades, setSelectedTrades] = useState<string[]>([]);
 
-  const allTrades = ["plumbing", "electrical", "hvac", "roofing", "drywall", "painting", "flooring", "landscaping"];
+  const allTrades = ["plumbing", "electric", "tile", "cabinets", "paint", "windows", "doors", "floors", "misc"];
   const [step, setStep] = useState(1); // 1 = form, 2 = upload app
 
   useEffect(() => {
