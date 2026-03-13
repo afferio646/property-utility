@@ -28,7 +28,8 @@ export default function Dashboard() {
 
   const totalProperties = properties.length;
   const totalPhotos = photos.length;
-  const activeAlerts = photos.filter(p => p.hasAlert).length;
+  const alertPhotos = photos.filter(p => p.hasAlert || p.managerAnswer);
+  const activeAlerts = alertPhotos.filter(p => !p.managerAnswer).length;
 
   const contractors = users.filter(u => u.role === "contractor" || u.role === "lead");
   const allTrades = ["plumbing", "electric", "tile", "cabinets", "paint", "windows", "doors", "floors", "misc"];
@@ -113,29 +114,35 @@ export default function Dashboard() {
           <div className="bg-[#374151] p-2 md:p-3 rounded shadow-sm border-l-2 border-[#3b82f6] flex flex-col gap-3">
 
             {/* Active Alerts Tracking Section */}
-            {activeAlerts > 0 && (
-              <div className="bg-red-900/20 border border-red-800 rounded p-2">
-                <h2 className="text-red-500 text-[10px] font-bold mb-2 flex items-center gap-1.5">
-                  <FaExclamationTriangle /> Active Field Alerts
+            {alertPhotos.length > 0 && (
+              <div className="bg-[#1f2937] border border-[#4b5563] rounded p-2">
+                <h2 className="text-white text-[10px] font-bold mb-2 flex items-center gap-1.5">
+                  <FaExclamationTriangle className={activeAlerts > 0 ? "text-red-500" : "text-green-500"} /> Field Alerts
                 </h2>
                 <div className="flex flex-col gap-1.5">
-                  {photos.filter(p => p.hasAlert).map(alertPhoto => {
+                  {alertPhotos.map(alertPhoto => {
                     const contractor = contractors.find(c => c.id === alertPhoto.contractorId);
                     const prop = properties.find(p => p.id === alertPhoto.propertyId);
+                    const isAnswered = !!alertPhoto.managerAnswer;
+
                     return (
                       <Link
                         key={alertPhoto.id}
                         href={`/properties/${alertPhoto.propertyId}/trades/${alertPhoto.trade}`}
-                        className="bg-[#1f2937] border border-red-500/50 p-1.5 rounded flex flex-col sm:flex-row justify-between sm:items-center gap-1.5 hover:bg-[#374151] transition-colors"
+                        className={`bg-[#111827] border p-1.5 rounded flex flex-col sm:flex-row justify-between sm:items-center gap-1.5 hover:bg-[#374151] transition-colors ${
+                          isAnswered ? 'border-green-500/50' : 'border-red-500/50'
+                        }`}
                       >
                         <div className="flex flex-col gap-0.5">
                           <span className="font-bold text-[10px] text-white">{prop?.name} <span className="text-gray-400 font-normal">({alertPhoto.trade})</span></span>
-                          <span className="text-[9px] text-red-400">&quot;{alertPhoto.alertNote}&quot;</span>
+                          <span className={`text-[9px] ${isAnswered ? 'text-gray-400' : 'text-red-400'}`}>&quot;{alertPhoto.alertNote}&quot;</span>
                         </div>
                         <div className="flex flex-col sm:items-end gap-0.5">
                           <span className="text-[9px] text-gray-300 font-medium">{contractor?.company || "Unknown Contractor"}</span>
-                          <span className="inline-block px-1.5 py-0.5 bg-red-600/20 text-red-500 rounded text-[8px] font-bold border border-red-500/50 uppercase">
-                            View Issue
+                          <span className={`inline-block px-1.5 py-0.5 rounded text-[8px] font-bold border uppercase ${
+                            isAnswered ? 'bg-green-600/20 text-green-500 border-green-500/50' : 'bg-red-600/20 text-red-500 border-red-500/50 animate-pulse'
+                          }`}>
+                            {isAnswered ? 'ANSWERED' : 'VIEW ISSUE'}
                           </span>
                         </div>
                       </Link>
@@ -164,15 +171,19 @@ export default function Dashboard() {
                              });
 
                              // Check for alerts specifically for this property and trade
-                             const activeAlertPhoto = photos.find(p => p.propertyId === property.id && p.trade === trade && p.hasAlert);
-                             const hasAlert = !!activeAlertPhoto;
+                             const activeAlertPhoto = photos.find(p => p.propertyId === property.id && p.trade === trade && p.hasAlert && !p.managerAnswer);
+                             const answeredAlertPhoto = photos.find(p => p.propertyId === property.id && p.trade === trade && p.managerAnswer);
 
-                             const isActive = assignedContractors.length > 0 || hasAlert;
+                             const hasActiveAlert = !!activeAlertPhoto;
+                             const hasAnsweredAlert = !hasActiveAlert && !!answeredAlertPhoto;
+
+                             const isActive = assignedContractors.length > 0 || hasActiveAlert || hasAnsweredAlert;
 
                              // Ensure contractor who triggered alert is in the list even if no longer formally assigned
                              const displayContractors = [...assignedContractors];
-                             if (activeAlertPhoto && activeAlertPhoto.contractorId && !displayContractors.find(c => c.id === activeAlertPhoto.contractorId)) {
-                                const alertContractor = contractors.find(c => c.id === activeAlertPhoto.contractorId);
+                             const relevantAlert = activeAlertPhoto || answeredAlertPhoto;
+                             if (relevantAlert && relevantAlert.contractorId && !displayContractors.find(c => c.id === relevantAlert.contractorId)) {
+                                const alertContractor = contractors.find(c => c.id === relevantAlert.contractorId);
                                 if (alertContractor) {
                                    displayContractors.push(alertContractor);
                                 }
@@ -195,14 +206,14 @@ export default function Dashboard() {
                                          }
                                       }}
                                       className={`px-1 py-1 rounded text-[8px] font-bold uppercase tracking-wider text-center transition-all border ${
-                                         hasAlert ? 'bg-red-600 border-red-500 text-white animate-pulse-slow shadow-[0_0_10px_rgba(220,38,38,0.5)] cursor-pointer' :
-                                         isActive ? 'bg-[#10b981]/20 border-[#10b981]/50 text-[#10b981] cursor-pointer hover:bg-[#10b981]/30' :
+                                         hasActiveAlert ? 'bg-red-600 border-red-500 text-white animate-pulse-slow shadow-[0_0_10px_rgba(220,38,38,0.5)] cursor-pointer' :
+                                         hasAnsweredAlert || isActive ? 'bg-[#10b981]/20 border-[#10b981]/50 text-[#10b981] cursor-pointer hover:bg-[#10b981]/30' :
                                          'bg-[#374151]/50 border-[#4b5563] text-gray-500 cursor-not-allowed'
                                       }`}
                                       disabled={!isActive}
                                    >
                                       <div className="flex items-center justify-center gap-1">
-                                         {hasAlert && <FaExclamationTriangle size={8} />}
+                                         {hasActiveAlert && <FaExclamationTriangle size={8} />}
                                          {trade}
                                       </div>
                                    </button>
@@ -213,7 +224,8 @@ export default function Dashboard() {
                                          <div className="text-[8px] text-blue-400 font-bold uppercase mb-1.5 border-b border-blue-900/50 pb-0.5">{trade} Contractors</div>
                                          <div className="flex flex-col gap-1.5">
                                             {displayContractors.map(c => {
-                                               const contractorAlert = photos.find(p => p.propertyId === property.id && p.trade === trade && p.hasAlert && p.contractorId === c.id);
+                                               const contractorActiveAlert = photos.find(p => p.propertyId === property.id && p.trade === trade && p.hasAlert && !p.managerAnswer && p.contractorId === c.id);
+                                               const contractorAnsweredAlert = photos.find(p => p.propertyId === property.id && p.trade === trade && p.managerAnswer && p.contractorId === c.id);
 
                                                return (
                                                   <div key={c.id} className="flex flex-wrap items-center justify-between gap-1.5 bg-[#1f2937] p-1.5 rounded border border-[#374151]">
@@ -221,12 +233,20 @@ export default function Dashboard() {
                                                         <span className="text-[10px] font-bold text-white">{c.company}</span>
                                                         <span className="text-[8px] text-gray-400">{c.name} • {c.phone}</span>
                                                      </div>
-                                                     {contractorAlert && (
+                                                     {contractorActiveAlert && (
                                                         <Link
                                                           href={`/properties/${property.id}/trades/${trade}`}
                                                           className="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 bg-red-600 hover:bg-red-500 text-white rounded text-[8px] font-bold border border-red-500 shadow-[0_0_8px_rgba(220,38,38,0.7)] transition-all animate-pulse"
                                                         >
                                                           <FaExclamationTriangle size={8} /> ALERT
+                                                        </Link>
+                                                     )}
+                                                     {!contractorActiveAlert && contractorAnsweredAlert && (
+                                                        <Link
+                                                          href={`/properties/${property.id}/trades/${trade}`}
+                                                          className="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 bg-green-600/20 hover:bg-green-600/30 text-green-500 rounded text-[8px] font-bold border border-green-500/50 transition-all"
+                                                        >
+                                                          ANSWERED
                                                         </Link>
                                                      )}
                                                   </div>
