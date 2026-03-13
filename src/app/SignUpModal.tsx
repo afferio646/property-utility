@@ -24,7 +24,7 @@ function SignUpModalContent() {
 
   useEffect(() => {
     const roleParam = searchParams.get("role");
-    if (roleParam && (roleParam === "manager" || roleParam === "lead" || roleParam === "technician")) {
+    if (roleParam && (roleParam === "manager" || roleParam === "lead" || roleParam === "contractor")) {
       setTimeout(() => {
         setRole(roleParam as UserRole);
         setIsOpen(true);
@@ -83,8 +83,8 @@ function SignUpModalContent() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-      <div className="bg-white text-black p-6 rounded-lg w-full max-w-md shadow-2xl relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4">
+      <div className="bg-white text-black p-6 rounded-lg w-full max-w-md shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
         <button
           onClick={() => { setIsOpen(false); setStep(1); }}
           className="absolute top-4 right-4 text-gray-500 hover:text-black font-bold text-xl"
@@ -146,7 +146,7 @@ function SignUpModalContent() {
                 />
               </div>
 
-              {(role === "technician" || role === "none") && (
+              {(role === "contractor" || role === "none") && (
                 <div className="pt-2 border-t border-gray-200 mt-4 space-y-4">
                   <div>
                     <label className="block text-sm font-bold text-blue-600 mb-2">Select Your Trade Categories (Contractors Only)</label>
@@ -199,7 +199,7 @@ function SignUpModalContent() {
                    <option value="none" disabled>Select a role...</option>
                    <option value="manager">Manager</option>
                    <option value="lead">Lead</option>
-                   <option value="technician">Technician/Contractor</option>
+                   <option value="contractor">Contractor</option>
                  </select>
                </div>
               )}

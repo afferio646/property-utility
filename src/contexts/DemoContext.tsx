@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 // Types
-export type UserRole = "manager" | "lead" | "technician" | "none";
+export type UserRole = "manager" | "lead" | "contractor" | "none";
 
 export interface User {
   id: string;
@@ -12,8 +12,8 @@ export interface User {
   phone: string;
   company: string;
   role: UserRole;
-  trades?: TradeType[]; // Specific to technicians/contractors
-  assignedProperties?: string[]; // Specific to contractors/technicians
+  trades?: TradeType[]; // Specific to contractors/contractors
+  assignedProperties?: string[]; // Specific to contractors/contractors
 }
 
 
@@ -85,6 +85,8 @@ interface DemoContextType {
   toggleNote: (photoId: string, noteId: string) => void;
   deleteNote: (photoId: string, noteId: string) => void;
   editNote: (photoId: string, noteId: string, text: string) => void;
+  updateUserRole: (userId: string, role: UserRole) => void;
+  deleteUser: (userId: string) => void;
 }
 
 const DemoContext = createContext<DemoContextType | undefined>(undefined);
@@ -180,6 +182,14 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
 
   const updateUserAssignedProperties = (userId: string, assignedProperties: string[]) => {
     setUsers(users.map(u => u.id === userId ? { ...u, assignedProperties } : u));
+  };
+
+  const updateUserRole = (userId: string, role: UserRole) => {
+    setUsers(users.map(u => u.id === userId ? { ...u, role } : u));
+  };
+
+  const deleteUser = (userId: string) => {
+    setUsers(users.filter(u => u.id !== userId));
   };
 
   const updatePropertyName = (propertyId: string, name: string) => {
@@ -372,7 +382,9 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
         addNote,
         toggleNote,
         deleteNote,
-        editNote
+        editNote,
+        updateUserRole,
+        deleteUser
       }}
     >
       {children}

@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useDemo, User } from "@/contexts/DemoContext";
+import { useDemo } from "@/contexts/DemoContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { FaArrowLeft, FaExclamationTriangle } from "react-icons/fa";
+import { FaArrowLeft, FaExclamationTriangle, FaTrash } from "react-icons/fa";
 
 export default function Dashboard() {
-  const { users, properties, photos, userRole, updateUserAssignedProperties } = useDemo();
+  const { users, properties, photos, userRole, updateUserAssignedProperties, updateUserRole, deleteUser } = useDemo();
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<"directory" | "database" | "users">("directory");
@@ -28,7 +28,7 @@ export default function Dashboard() {
   const totalPhotos = photos.length;
   const activeAlerts = photos.filter(p => p.hasAlert).length;
 
-  const contractors = users.filter(u => u.role === "technician" || u.role === "lead");
+  const contractors = users.filter(u => u.role === "contractor" || u.role === "lead");
   const allTrades = ["plumbing", "electric", "tile", "cabinets", "paint", "windows", "doors", "floors", "misc"];
 
   return (
@@ -108,7 +108,42 @@ export default function Dashboard() {
 
         {/* TAB 1: Directory */}
         {activeTab === "directory" && (
-          <div className="bg-[#374151] p-3 md:p-4 rounded shadow-sm border-l-2 border-[#3b82f6]">
+          <div className="bg-[#374151] p-3 md:p-4 rounded shadow-sm border-l-2 border-[#3b82f6] flex flex-col gap-6">
+
+            {/* Active Alerts Tracking Section */}
+            {activeAlerts > 0 && (
+              <div className="bg-red-900/20 border border-red-800 rounded p-3">
+                <h2 className="text-red-500 font-bold mb-3 flex items-center gap-2">
+                  <FaExclamationTriangle /> Active Field Alerts
+                </h2>
+                <div className="flex flex-col gap-2">
+                  {photos.filter(p => p.hasAlert).map(alertPhoto => {
+                    const contractor = contractors.find(c => c.id === alertPhoto.contractorId);
+                    const prop = properties.find(p => p.id === alertPhoto.propertyId);
+                    return (
+                      <Link
+                        key={alertPhoto.id}
+                        href={`/properties/${alertPhoto.propertyId}/trades/${alertPhoto.trade}`}
+                        className="bg-[#1f2937] border border-red-500/50 p-2 rounded flex flex-col sm:flex-row justify-between sm:items-center gap-2 hover:bg-[#374151] transition-colors"
+                      >
+                        <div className="flex flex-col gap-1">
+                          <span className="font-bold text-sm text-white">{prop?.name} <span className="text-gray-400 font-normal">({alertPhoto.trade})</span></span>
+                          <span className="text-xs text-red-400">&quot;{alertPhoto.alertNote}&quot;</span>
+                        </div>
+                        <div className="flex flex-col sm:items-end gap-1">
+                          <span className="text-xs text-gray-300 font-medium">{contractor?.company || "Unknown Contractor"}</span>
+                          <span className="inline-block px-2 py-1 bg-red-600/20 text-red-500 rounded text-[10px] font-bold border border-red-500/50 uppercase">
+                            View Issue
+                          </span>
+                        </div>
+                      </Link>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            <div>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-base font-bold">Contractor Directory by Trade</h2>
               <div className="text-xs text-[#9ca3af]">Total: {contractors.length} Active</div>
@@ -116,7 +151,7 @@ export default function Dashboard() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {allTrades.map(trade => {
-                const tradeContractors = contractors.filter(c => c.trades?.includes(trade) || (!c.trades?.length && trade === "plumbing"));
+                const tradeContractors = contractors.filter(c => c.trades?.includes(trade));
                 return (
                   <div key={trade} className="overflow-hidden border border-[#4b5563] rounded min-h-[120px] flex flex-col bg-[#1f2937]">
                     <div className="bg-[#4b5563] p-2 border-b border-[#374151]">
@@ -164,6 +199,7 @@ export default function Dashboard() {
                 );
               })}
             </div>
+            </div>
           </div>
         )}
 
@@ -191,6 +227,47 @@ export default function Dashboard() {
                       <span className="inline-block bg-[#3b82f6]/20 text-[#3b82f6] px-2 py-1 rounded text-xs font-bold uppercase tracking-wider border border-[#3b82f6]/30">
                         {contractor.role}
                       </span>
+                    </div>
+                  </div>
+
+                  {/* Alert & Communications History */}
+                  <div className="mb-6">
+                    <h4 className="text-sm font-bold text-[#d1d5db] mb-2 uppercase tracking-wider flex items-center gap-2">
+                       <FaExclamationTriangle className="text-gray-400" /> Communications / Alerts History
+                    </h4>
+                    <div className="bg-[#111827] border border-[#374151] rounded p-2 max-h-40 overflow-y-auto pr-2 space-y-2">
+                      {(() => {
+                        // Find all past and present alerts for this contractor
+                        const contractorAlerts = photos.filter(p => p.contractorId === contractor.id && (p.hasAlert || p.alertNote));
+                        if (contractorAlerts.length === 0) {
+                          return <div className="text-xs text-[#9ca3af] italic p-2 text-center">No alerts or communications recorded.</div>;
+                        }
+                        return contractorAlerts.map((alertPhoto) => {
+                           const prop = properties.find(p => p.id === alertPhoto.propertyId);
+                           const isResolved = !alertPhoto.hasAlert;
+
+                           return (
+                             <div key={alertPhoto.id} className={`p-2 rounded border text-xs ${isResolved ? 'bg-[#374151]/50 border-[#4b5563]' : 'bg-red-900/20 border-red-800'}`}>
+                               <div className="flex justify-between items-start gap-2 mb-1">
+                                  <div className="font-bold text-gray-200">
+                                    {prop?.name} <span className="text-gray-400 font-normal">({alertPhoto.trade})</span>
+                                  </div>
+                                  <div className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${isResolved ? 'bg-gray-600 text-gray-300' : 'bg-red-600 text-white animate-pulse'}`}>
+                                    {isResolved ? 'Resolved' : 'Active'}
+                                  </div>
+                               </div>
+                               <div className="text-gray-300 mb-1">
+                                 <span className="font-semibold text-red-400">Issue:</span> {alertPhoto.alertNote}
+                               </div>
+                               {alertPhoto.managerAnswer && (
+                                 <div className="text-gray-400 mt-1 pl-2 border-l-2 border-green-500/50">
+                                   <span className="font-semibold text-green-500">Manager:</span> {alertPhoto.managerAnswer}
+                                 </div>
+                               )}
+                             </div>
+                           )
+                        });
+                      })()}
                     </div>
                   </div>
 
@@ -268,17 +345,36 @@ export default function Dashboard() {
                       <td className="p-3 text-sm font-medium text-white">{user.name}</td>
                       <td className="p-3 text-sm text-[#d1d5db]">{user.company}</td>
                       <td className="p-3 text-sm">
-                        <span className={`inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
-                          user.role === 'manager' ? 'bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/30' :
-                          user.role === 'lead' ? 'bg-[#3b82f6]/20 text-[#3b82f6] border border-[#3b82f6]/30' :
-                          'bg-[#10b981]/20 text-[#10b981] border border-[#10b981]/30'
-                        }`}>
-                          {user.role}
-                        </span>
+                        <select
+                           value={user.role}
+                           onChange={(e) => updateUserRole(user.id, e.target.value as "manager" | "lead" | "contractor" | "none")}
+                           className={`inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider appearance-none cursor-pointer outline-none transition-colors ${
+                             user.role === 'manager' ? 'bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/30 focus:border-[#D4AF37]' :
+                             user.role === 'lead' ? 'bg-[#3b82f6]/20 text-[#3b82f6] border border-[#3b82f6]/30 focus:border-[#3b82f6]' :
+                             'bg-[#10b981]/20 text-[#10b981] border border-[#10b981]/30 focus:border-[#10b981]'
+                           }`}
+                         >
+                           <option value="manager" className="bg-gray-800 text-white">MANAGER</option>
+                           <option value="lead" className="bg-gray-800 text-white">LEAD</option>
+                           <option value="contractor" className="bg-gray-800 text-white">CONTRACTOR</option>
+                        </select>
                       </td>
-                      <td className="p-3 text-sm text-[#9ca3af]">
-                        <div>{user.email}</div>
-                        <div className="text-xs">{user.phone}</div>
+                      <td className="p-3 text-sm text-[#9ca3af] flex justify-between items-center gap-2">
+                        <div>
+                          <div>{user.email}</div>
+                          <div className="text-xs">{user.phone}</div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            if (confirm(`Are you sure you want to delete user ${user.name}?`)) {
+                              deleteUser(user.id);
+                            }
+                          }}
+                          className="text-gray-500 hover:text-red-500 transition-colors p-2 rounded hover:bg-red-500/10"
+                          title="Delete User"
+                        >
+                          <FaTrash size={14} />
+                        </button>
                       </td>
                     </tr>
                   ))}

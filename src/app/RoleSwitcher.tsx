@@ -15,7 +15,7 @@ export default function RoleSwitcher() {
       >
         <option value="manager" className="bg-gray-800 text-white">Manager</option>
         <option value="lead" className="bg-gray-800 text-white">Lead</option>
-        <option value="technician" className="bg-gray-800 text-white">Contractor</option>
+        <option value="contractor" className="bg-gray-800 text-white">Contractor</option>
       </select>
     </div>
   );

@@ -2,16 +2,16 @@
 
 import React, { useState } from "react";
 import { useDemo, UserRole } from "@/contexts/DemoContext";
-import { FaUserPlus, FaTimes, FaUserShield, FaUserTie, FaUserCog } from "react-icons/fa";
+import { FaUserPlus, FaTimes, FaUserCog, FaTrash } from "react-icons/fa";
 
 export default function ManageUsersModal() {
-  const { userRole, users, addUser } = useDemo();
+  const { userRole, users, addUser, updateUserRole, deleteUser } = useDemo();
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [company, setCompany] = useState("");
-  const [role, setRole] = useState<UserRole>("technician");
+  const [role, setRole] = useState<UserRole>("contractor");
 
   // Also open when global event is fired
   React.useEffect(() => {
@@ -33,7 +33,7 @@ export default function ManageUsersModal() {
     setEmail("");
     setPhone("");
     setCompany("");
-    setRole("technician");
+    setRole("contractor");
   };
 
   const handleAddUser = (e: React.FormEvent) => {
@@ -121,7 +121,7 @@ export default function ManageUsersModal() {
                     >
                       <option value="manager">Manager</option>
                       <option value="lead">Lead</option>
-                      <option value="technician">Technician/Contractor</option>
+                      <option value="contractor">Contractor</option>
                     </select>
                   </div>
                   <button
@@ -147,16 +147,33 @@ export default function ManageUsersModal() {
                            <p className="text-xs text-gray-400">{u.email}</p>
                            <p className="text-xs text-gray-500">{u.company}</p>
                          </div>
-                         <div className="flex flex-col items-end">
-                           <span className={`text-xs px-2 py-1 rounded-full font-semibold uppercase tracking-wider ${
-                             u.role === 'manager' ? 'bg-blue-900/50 text-blue-300' :
-                             u.role === 'lead' ? 'bg-yellow-900/50 text-yellow-300' :
-                             'bg-green-900/50 text-green-300'
-                           }`}>
-                             {u.role === 'manager' ? <FaUserShield className="inline mr-1"/> :
-                              u.role === 'lead' ? <FaUserTie className="inline mr-1"/> : null}
-                             {u.role}
-                           </span>
+                         <div className="flex flex-col items-end gap-2">
+                            <div className="flex items-center gap-2">
+                               <select
+                                 value={u.role}
+                                 onChange={(e) => updateUserRole(u.id, e.target.value as UserRole)}
+                                 className={`text-xs px-2 py-1 rounded-full font-semibold uppercase tracking-wider appearance-none cursor-pointer outline-none ${
+                                   u.role === 'manager' ? 'bg-blue-900/50 text-blue-300 border border-blue-500/30 focus:border-blue-500' :
+                                   u.role === 'lead' ? 'bg-yellow-900/50 text-yellow-300 border border-yellow-500/30 focus:border-yellow-500' :
+                                   'bg-green-900/50 text-green-300 border border-green-500/30 focus:border-green-500'
+                                 }`}
+                               >
+                                 <option value="manager" className="bg-gray-800 text-white">Manager</option>
+                                 <option value="lead" className="bg-gray-800 text-white">Lead</option>
+                                 <option value="contractor" className="bg-gray-800 text-white">Contractor</option>
+                               </select>
+                               <button
+                                 onClick={() => {
+                                   if (confirm(`Are you sure you want to delete user ${u.name}?`)) {
+                                     deleteUser(u.id);
+                                   }
+                                 }}
+                                 className="text-gray-500 hover:text-red-500 transition-colors p-1"
+                                 title="Delete User"
+                               >
+                                 <FaTrash size={14} />
+                               </button>
+                            </div>
                          </div>
                       </div>
                     ))}

@@ -83,7 +83,7 @@ export default function Home() {
 
           <div className="flex items-center gap-2 mt-4 sm:mt-0 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0">
             {/* Global Notification for Contractor when Manager Answers */}
-            {userRole === "technician" && photos.some(p => p.hasAnswer && p.contractorId === currentUser?.id) && (
+            {userRole === "contractor" && photos.some(p => p.hasAnswer && p.contractorId === currentUser?.id) && (
               <div className="flex items-center justify-center bg-green-600 px-3 py-1.5 rounded text-[10px] font-bold tracking-wider uppercase text-white shadow-[0_0_15px_rgba(34,197,94,0.8)] border border-green-400 animate-pulse whitespace-nowrap cursor-default">
                 ANSWER RECEIVED
               </div>
