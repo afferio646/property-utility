@@ -163,11 +163,20 @@ export default function Dashboard() {
                                 return propAssignment && propAssignment.trades.includes(trade);
                              });
 
-                             const isActive = assignedContractors.length > 0;
-
                              // Check for alerts specifically for this property and trade
                              const activeAlertPhoto = photos.find(p => p.propertyId === property.id && p.trade === trade && p.hasAlert);
                              const hasAlert = !!activeAlertPhoto;
+
+                             const isActive = assignedContractors.length > 0 || hasAlert;
+
+                             // Ensure contractor who triggered alert is in the list even if no longer formally assigned
+                             const displayContractors = [...assignedContractors];
+                             if (activeAlertPhoto && activeAlertPhoto.contractorId && !displayContractors.find(c => c.id === activeAlertPhoto.contractorId)) {
+                                const alertContractor = contractors.find(c => c.id === activeAlertPhoto.contractorId);
+                                if (alertContractor) {
+                                   displayContractors.push(alertContractor);
+                                }
+                             }
 
                              const isExpanded = expandedProperty === property.id && expandedTrade === trade;
 
@@ -203,7 +212,7 @@ export default function Dashboard() {
                                       <div className="col-span-3 sm:col-span-4 md:col-span-5 lg:col-span-6 xl:col-span-9 mt-1.5 bg-[#111827] border border-[#3b82f6]/50 rounded p-1.5 order-last shadow-xl relative w-full">
                                          <div className="text-[8px] text-blue-400 font-bold uppercase mb-1.5 border-b border-blue-900/50 pb-0.5">{trade} Contractors</div>
                                          <div className="flex flex-col gap-1.5">
-                                            {assignedContractors.map(c => {
+                                            {displayContractors.map(c => {
                                                const contractorAlert = photos.find(p => p.propertyId === property.id && p.trade === trade && p.hasAlert && p.contractorId === c.id);
 
                                                return (
