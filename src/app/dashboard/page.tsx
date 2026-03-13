@@ -34,49 +34,49 @@ export default function Dashboard() {
   const allTrades = ["plumbing", "electric", "tile", "cabinets", "paint", "windows", "doors", "floors", "misc"];
 
   return (
-    <div className="min-h-screen bg-[#111827] text-[#f9fafb] font-sans pb-10 text-xs">
-      <header className="bg-[#374151] p-2 border-b border-[#4b5563] shadow-md sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
+    <div className="min-h-screen bg-[#111827] text-[#f9fafb] font-sans pb-10 text-[10px]">
+      <header className="bg-[#374151] p-1.5 border-b border-[#4b5563] shadow-md sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-1.5">
           <div>
-            <h1 className="text-sm font-bold text-[#3b82f6]">Property Admin Dashboard <span className="text-[8px] text-[#10b981] border border-[#10b981] px-1 py-0.5 rounded align-middle ml-2">v2.0 LIVE</span></h1>
-            <p className="text-[10px] text-[#d1d5db] mt-0.5">Authenticated Session: Property Manager</p>
+            <h1 className="text-xs font-bold text-[#3b82f6]">Property Admin Dashboard <span className="text-[7px] text-[#10b981] border border-[#10b981] px-1 py-0.5 rounded align-middle ml-2">v2.0 LIVE</span></h1>
+            <p className="text-[9px] text-[#d1d5db] mt-0.5">Authenticated Session: Property Manager</p>
           </div>
           <button
             onClick={() => router.push("/")}
-            className="bg-[#4b5563] hover:bg-[#111827] text-white border border-[#4b5563] px-2 py-1 rounded text-[10px] font-bold transition flex items-center gap-1.5"
+            className="bg-[#4b5563] hover:bg-[#111827] text-white border border-[#4b5563] px-2 py-0.5 rounded text-[9px] font-bold transition flex items-center gap-1.5"
           >
             <FaArrowLeft /> Back
           </button>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto p-2 md:p-3 mt-1">
+      <div className="max-w-7xl mx-auto p-1.5 md:p-2 mt-1">
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
-          <div className="bg-[#374151] p-2 rounded border-l-2 border-[#2563eb] shadow-sm">
-            <div className="text-[#d1d5db] text-[9px] uppercase font-bold mb-0.5 truncate">Total Properties managed</div>
-            <div className="text-base font-bold">{totalProperties}</div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-1.5 mb-3">
+          <div className="bg-[#374151] p-1.5 rounded border-l-2 border-[#2563eb] shadow-sm">
+            <div className="text-[#d1d5db] text-[8px] uppercase font-bold mb-0.5 truncate">Total Properties managed</div>
+            <div className="text-sm font-bold">{totalProperties}</div>
           </div>
-          <div className="bg-[#374151] p-2 rounded border-l-2 border-[#10b981] shadow-sm">
-            <div className="text-[#d1d5db] text-[9px] uppercase font-bold mb-0.5 truncate">Active Contractors</div>
-            <div className="text-base font-bold">{contractors.length}</div>
+          <div className="bg-[#374151] p-1.5 rounded border-l-2 border-[#10b981] shadow-sm">
+            <div className="text-[#d1d5db] text-[8px] uppercase font-bold mb-0.5 truncate">Active Contractors</div>
+            <div className="text-sm font-bold">{contractors.length}</div>
           </div>
-          <div className="bg-[#374151] p-2 rounded border-l-2 border-[#D4AF37] shadow-sm">
-            <div className="text-[#d1d5db] text-[9px] uppercase font-bold mb-0.5 truncate">Tasks Documented</div>
-            <div className="text-base font-bold">{totalPhotos}</div>
+          <div className="bg-[#374151] p-1.5 rounded border-l-2 border-[#D4AF37] shadow-sm">
+            <div className="text-[#d1d5db] text-[8px] uppercase font-bold mb-0.5 truncate">Tasks Documented</div>
+            <div className="text-sm font-bold">{totalPhotos}</div>
           </div>
-          <div className="bg-[#374151] p-2 rounded border-l-2 border-[#ef4444] shadow-sm">
-            <div className="text-[#d1d5db] text-[9px] uppercase font-bold mb-0.5 truncate">Active Field Alerts</div>
-            <div className="text-base font-bold text-[#ef4444]">{activeAlerts}</div>
+          <div className="bg-[#374151] p-1.5 rounded border-l-2 border-[#ef4444] shadow-sm">
+            <div className="text-[#d1d5db] text-[8px] uppercase font-bold mb-0.5 truncate">Active Field Alerts</div>
+            <div className="text-sm font-bold text-[#ef4444]">{activeAlerts}</div>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-[#4b5563] mb-4 overflow-x-auto hide-scrollbar">
+        <div className="flex border-b border-[#4b5563] mb-3 overflow-x-auto hide-scrollbar">
           <button
             onClick={() => setActiveTab("directory")}
-            className={`px-3 py-1.5 text-xs font-bold uppercase whitespace-nowrap transition-colors ${
+            className={`px-2 py-1 text-[10px] font-bold uppercase whitespace-nowrap transition-colors ${
               activeTab === "directory"
                 ? "text-[#3b82f6] border-b-2 border-[#3b82f6]"
                 : "text-[#9ca3af] hover:text-white"
@@ -86,7 +86,7 @@ export default function Dashboard() {
           </button>
           <button
             onClick={() => setActiveTab("database")}
-            className={`px-3 py-1.5 text-xs font-bold uppercase whitespace-nowrap transition-colors ${
+            className={`px-2 py-1 text-[10px] font-bold uppercase whitespace-nowrap transition-colors ${
               activeTab === "database"
                 ? "text-[#10b981] border-b-2 border-[#10b981]"
                 : "text-[#9ca3af] hover:text-white"
@@ -96,7 +96,7 @@ export default function Dashboard() {
           </button>
           <button
             onClick={() => setActiveTab("users")}
-            className={`px-3 py-1.5 text-xs font-bold uppercase whitespace-nowrap transition-colors ${
+            className={`px-2 py-1 text-[10px] font-bold uppercase whitespace-nowrap transition-colors ${
               activeTab === "users"
                 ? "text-[#D4AF37] border-b-2 border-[#D4AF37]"
                 : "text-[#9ca3af] hover:text-white"
@@ -110,15 +110,15 @@ export default function Dashboard() {
 
         {/* TAB 1: Directory */}
         {activeTab === "directory" && (
-          <div className="bg-[#374151] p-3 md:p-4 rounded shadow-sm border-l-2 border-[#3b82f6] flex flex-col gap-6">
+          <div className="bg-[#374151] p-2 md:p-3 rounded shadow-sm border-l-2 border-[#3b82f6] flex flex-col gap-3">
 
             {/* Active Alerts Tracking Section */}
             {activeAlerts > 0 && (
-              <div className="bg-red-900/20 border border-red-800 rounded p-3">
-                <h2 className="text-red-500 font-bold mb-3 flex items-center gap-2">
+              <div className="bg-red-900/20 border border-red-800 rounded p-2">
+                <h2 className="text-red-500 text-[10px] font-bold mb-2 flex items-center gap-1.5">
                   <FaExclamationTriangle /> Active Field Alerts
                 </h2>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1.5">
                   {photos.filter(p => p.hasAlert).map(alertPhoto => {
                     const contractor = contractors.find(c => c.id === alertPhoto.contractorId);
                     const prop = properties.find(p => p.id === alertPhoto.propertyId);
@@ -126,15 +126,15 @@ export default function Dashboard() {
                       <Link
                         key={alertPhoto.id}
                         href={`/properties/${alertPhoto.propertyId}/trades/${alertPhoto.trade}`}
-                        className="bg-[#1f2937] border border-red-500/50 p-2 rounded flex flex-col sm:flex-row justify-between sm:items-center gap-2 hover:bg-[#374151] transition-colors"
+                        className="bg-[#1f2937] border border-red-500/50 p-1.5 rounded flex flex-col sm:flex-row justify-between sm:items-center gap-1.5 hover:bg-[#374151] transition-colors"
                       >
-                        <div className="flex flex-col gap-1">
-                          <span className="font-bold text-sm text-white">{prop?.name} <span className="text-gray-400 font-normal">({alertPhoto.trade})</span></span>
-                          <span className="text-xs text-red-400">&quot;{alertPhoto.alertNote}&quot;</span>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="font-bold text-[10px] text-white">{prop?.name} <span className="text-gray-400 font-normal">({alertPhoto.trade})</span></span>
+                          <span className="text-[9px] text-red-400">&quot;{alertPhoto.alertNote}&quot;</span>
                         </div>
-                        <div className="flex flex-col sm:items-end gap-1">
-                          <span className="text-xs text-gray-300 font-medium">{contractor?.company || "Unknown Contractor"}</span>
-                          <span className="inline-block px-2 py-1 bg-red-600/20 text-red-500 rounded text-[10px] font-bold border border-red-500/50 uppercase">
+                        <div className="flex flex-col sm:items-end gap-0.5">
+                          <span className="text-[9px] text-gray-300 font-medium">{contractor?.company || "Unknown Contractor"}</span>
+                          <span className="inline-block px-1.5 py-0.5 bg-red-600/20 text-red-500 rounded text-[8px] font-bold border border-red-500/50 uppercase">
                             View Issue
                           </span>
                         </div>
@@ -146,16 +146,16 @@ export default function Dashboard() {
             )}
 
             {/* Properties Accordion List */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
               {properties.map(property => {
                  return (
                     <div key={property.id} className="bg-[#1f2937] border border-[#4b5563] rounded overflow-hidden">
-                       <div className="bg-[#4b5563]/50 p-3 border-b border-[#374151]">
-                          <h3 className="font-bold text-sm text-white">{property.name}</h3>
-                          {property.address && <p className="text-[10px] text-gray-400 mt-0.5">{property.address}</p>}
+                       <div className="bg-[#4b5563]/50 p-2 border-b border-[#374151]">
+                          <h3 className="font-bold text-xs text-white">{property.name}</h3>
+                          {property.address && <p className="text-[8px] text-gray-400 mt-0.5">{property.address}</p>}
                        </div>
 
-                       <div className="p-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                       <div className="p-2 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-9 gap-1.5">
                           {allTrades.map(trade => {
                              // Find contractors assigned to this property AND this specific trade
                              const assignedContractors = contractors.filter(c => {
@@ -185,39 +185,39 @@ export default function Dashboard() {
                                             }
                                          }
                                       }}
-                                      className={`px-2 py-2 rounded text-[10px] font-bold uppercase tracking-wider text-center transition-all border ${
-                                         hasAlert ? 'bg-red-600 border-red-500 text-white animate-pulse-slow shadow-[0_0_15px_rgba(220,38,38,0.5)] cursor-pointer' :
+                                      className={`px-1 py-1 rounded text-[8px] font-bold uppercase tracking-wider text-center transition-all border ${
+                                         hasAlert ? 'bg-red-600 border-red-500 text-white animate-pulse-slow shadow-[0_0_10px_rgba(220,38,38,0.5)] cursor-pointer' :
                                          isActive ? 'bg-[#10b981]/20 border-[#10b981]/50 text-[#10b981] cursor-pointer hover:bg-[#10b981]/30' :
                                          'bg-[#374151]/50 border-[#4b5563] text-gray-500 cursor-not-allowed'
                                       }`}
                                       disabled={!isActive}
                                    >
-                                      <div className="flex items-center justify-center gap-1.5">
-                                         {hasAlert && <FaExclamationTriangle />}
+                                      <div className="flex items-center justify-center gap-1">
+                                         {hasAlert && <FaExclamationTriangle size={8} />}
                                          {trade}
                                       </div>
                                    </button>
 
                                    {/* Expanded Accordion Area */}
                                    {isExpanded && isActive && (
-                                      <div className="col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-5 mt-2 bg-[#111827] border border-[#3b82f6]/50 rounded p-2 order-last shadow-xl relative w-full">
-                                         <div className="text-[9px] text-blue-400 font-bold uppercase mb-2 border-b border-blue-900/50 pb-1">{trade} Contractors</div>
-                                         <div className="flex flex-col gap-2">
+                                      <div className="col-span-3 sm:col-span-4 md:col-span-5 lg:col-span-6 xl:col-span-9 mt-1.5 bg-[#111827] border border-[#3b82f6]/50 rounded p-1.5 order-last shadow-xl relative w-full">
+                                         <div className="text-[8px] text-blue-400 font-bold uppercase mb-1.5 border-b border-blue-900/50 pb-0.5">{trade} Contractors</div>
+                                         <div className="flex flex-col gap-1.5">
                                             {assignedContractors.map(c => {
                                                const contractorAlert = photos.find(p => p.propertyId === property.id && p.trade === trade && p.hasAlert && p.contractorId === c.id);
 
                                                return (
-                                                  <div key={c.id} className="flex flex-wrap items-center justify-between gap-2 bg-[#1f2937] p-2 rounded border border-[#374151]">
+                                                  <div key={c.id} className="flex flex-wrap items-center justify-between gap-1.5 bg-[#1f2937] p-1.5 rounded border border-[#374151]">
                                                      <div className="flex flex-col">
-                                                        <span className="text-xs font-bold text-white">{c.company}</span>
-                                                        <span className="text-[10px] text-gray-400">{c.name} • {c.phone}</span>
+                                                        <span className="text-[10px] font-bold text-white">{c.company}</span>
+                                                        <span className="text-[8px] text-gray-400">{c.name} • {c.phone}</span>
                                                      </div>
                                                      {contractorAlert && (
                                                         <Link
                                                           href={`/properties/${property.id}/trades/${trade}`}
-                                                          className="shrink-0 inline-flex items-center gap-1 px-2 py-1 bg-red-600 hover:bg-red-500 text-white rounded text-[10px] font-bold border border-red-500 shadow-[0_0_10px_rgba(220,38,38,0.7)] transition-all animate-pulse"
+                                                          className="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 bg-red-600 hover:bg-red-500 text-white rounded text-[8px] font-bold border border-red-500 shadow-[0_0_8px_rgba(220,38,38,0.7)] transition-all animate-pulse"
                                                         >
-                                                          <FaExclamationTriangle size={10} /> ALERT
+                                                          <FaExclamationTriangle size={8} /> ALERT
                                                         </Link>
                                                      )}
                                                   </div>
@@ -245,74 +245,74 @@ export default function Dashboard() {
 
         {/* TAB 2: Database */}
         {activeTab === "database" && (
-          <div className="bg-[#374151] p-3 md:p-4 rounded shadow-sm border-l-2 border-[#10b981]">
-            <div className="mb-4">
-              <h2 className="text-base font-bold text-white">Contractor Database & Assignments</h2>
-              <p className="text-xs text-[#9ca3af] mt-1">Manage which properties each contractor is authorized to work on.</p>
+          <div className="bg-[#374151] p-2 md:p-3 rounded shadow-sm border-l-2 border-[#10b981]">
+            <div className="mb-3">
+              <h2 className="text-xs font-bold text-white">Contractor Database & Assignments</h2>
+              <p className="text-[9px] text-[#9ca3af] mt-0.5">Manage which properties each contractor is authorized to work on.</p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {contractors.map(contractor => (
-                <div key={contractor.id} className="bg-[#1f2937] border border-[#4b5563] rounded p-4">
-                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4 pb-4 border-b border-[#4b5563]">
-                    <div className="flex flex-col gap-2">
+                <div key={contractor.id} className="bg-[#1f2937] border border-[#4b5563] rounded p-3">
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2 mb-3 pb-3 border-b border-[#4b5563]">
+                    <div className="flex flex-col gap-1.5">
                       <div>
-                        <h3 className="text-lg font-bold text-white">{contractor.company}</h3>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
-                          <span className="text-sm text-[#d1d5db]">{contractor.name}</span>
-                          <span className="text-sm text-[#9ca3af]">{contractor.email}</span>
-                          <span className="text-sm text-[#9ca3af]">{contractor.phone}</span>
+                        <h3 className="text-sm font-bold text-white">{contractor.company}</h3>
+                        <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-0.5">
+                          <span className="text-[10px] text-[#d1d5db]">{contractor.name}</span>
+                          <span className="text-[10px] text-[#9ca3af]">{contractor.email}</span>
+                          <span className="text-[10px] text-[#9ca3af]">{contractor.phone}</span>
                         </div>
                       </div>
-                      <div className="flex flex-wrap gap-1 mt-1">
+                      <div className="flex flex-wrap gap-1">
                          {(contractor.trades || []).map(trade => (
-                            <span key={trade} className="inline-block bg-[#374151] border border-[#4b5563] text-[#d1d5db] px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">
+                            <span key={trade} className="inline-block bg-[#374151] border border-[#4b5563] text-[#d1d5db] px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider">
                               {trade}
                             </span>
                          ))}
                          {(!contractor.trades || contractor.trades.length === 0) && (
-                            <span className="text-[10px] text-gray-500 italic">No trades specified</span>
+                            <span className="text-[8px] text-gray-500 italic">No trades specified</span>
                          )}
                       </div>
                     </div>
                     <div className="shrink-0">
-                      <span className="inline-block bg-[#3b82f6]/20 text-[#3b82f6] px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider border border-[#3b82f6]/30">
+                      <span className="inline-block bg-[#3b82f6]/20 text-[#3b82f6] px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border border-[#3b82f6]/30">
                         {contractor.role}
                       </span>
                     </div>
                   </div>
 
                   {/* Alert & Communications History */}
-                  <div className="mb-6">
-                    <h4 className="text-sm font-bold text-[#d1d5db] mb-2 uppercase tracking-wider flex items-center gap-2">
-                       <FaExclamationTriangle className="text-gray-400" /> Communications / Alerts History
+                  <div className="mb-4">
+                    <h4 className="text-[10px] font-bold text-[#d1d5db] mb-1.5 uppercase tracking-wider flex items-center gap-1.5">
+                       <FaExclamationTriangle className="text-gray-400" size={10} /> Communications / Alerts History
                     </h4>
-                    <div className="bg-[#111827] border border-[#374151] rounded p-2 max-h-40 overflow-y-auto pr-2 space-y-2">
+                    <div className="bg-[#111827] border border-[#374151] rounded p-1.5 max-h-32 overflow-y-auto pr-1.5 space-y-1.5">
                       {(() => {
                         // Find all past and present alerts for this contractor
                         const contractorAlerts = photos.filter(p => p.contractorId === contractor.id && (p.hasAlert || p.alertNote));
                         if (contractorAlerts.length === 0) {
-                          return <div className="text-xs text-[#9ca3af] italic p-2 text-center">No alerts or communications recorded.</div>;
+                          return <div className="text-[9px] text-[#9ca3af] italic p-1 text-center">No alerts or communications recorded.</div>;
                         }
                         return contractorAlerts.map((alertPhoto) => {
                            const prop = properties.find(p => p.id === alertPhoto.propertyId);
                            const isResolved = !alertPhoto.hasAlert;
 
                            return (
-                             <div key={alertPhoto.id} className={`p-2 rounded border text-xs ${isResolved ? 'bg-[#374151]/50 border-[#4b5563]' : 'bg-red-900/20 border-red-800'}`}>
-                               <div className="flex justify-between items-start gap-2 mb-1">
+                             <div key={alertPhoto.id} className={`p-1.5 rounded border text-[9px] ${isResolved ? 'bg-[#374151]/50 border-[#4b5563]' : 'bg-red-900/20 border-red-800'}`}>
+                               <div className="flex justify-between items-start gap-1.5 mb-1">
                                   <div className="font-bold text-gray-200">
                                     {prop?.name} <span className="text-gray-400 font-normal">({alertPhoto.trade})</span>
                                   </div>
-                                  <div className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${isResolved ? 'bg-gray-600 text-gray-300' : 'bg-red-600 text-white animate-pulse'}`}>
+                                  <div className={`px-1 py-0.5 rounded text-[7px] font-bold uppercase ${isResolved ? 'bg-gray-600 text-gray-300' : 'bg-red-600 text-white animate-pulse'}`}>
                                     {isResolved ? 'Resolved' : 'Active'}
                                   </div>
                                </div>
-                               <div className="text-gray-300 mb-1">
+                               <div className="text-gray-300 mb-0.5">
                                  <span className="font-semibold text-red-400">Issue:</span> {alertPhoto.alertNote}
                                </div>
                                {alertPhoto.managerAnswer && (
-                                 <div className="text-gray-400 mt-1 pl-2 border-l-2 border-green-500/50">
+                                 <div className="text-gray-400 mt-1 pl-1.5 border-l-2 border-green-500/50">
                                    <span className="font-semibold text-green-500">Manager:</span> {alertPhoto.managerAnswer}
                                  </div>
                                )}
@@ -324,8 +324,8 @@ export default function Dashboard() {
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-bold text-[#d1d5db] mb-3 uppercase tracking-wider">Assigned Properties & Trades</h4>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                    <h4 className="text-[10px] font-bold text-[#d1d5db] mb-2 uppercase tracking-wider">Assigned Properties & Trades</h4>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
                       {properties.map(property => {
                         const assignedData = contractor.assignedProperties?.find(ap => ap.propertyId === property.id);
                         const isAssigned = !!assignedData;

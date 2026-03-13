@@ -319,19 +319,25 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
   const toggleNote = (photoId: string, noteId: string) => {
     setPhotos(photos.map(p => {
       if (p.id === photoId) {
+        const updatedNotes = p.notes.map(n => {
+          if (n.id === noteId) {
+            const completed = !n.completed;
+            return {
+              ...n,
+              completed,
+              completedDate: completed ? new Date().toISOString() : null,
+            };
+          }
+          return n;
+        });
+
+        // Check if all notes are now completed
+        const allCompleted = updatedNotes.length > 0 && updatedNotes.every(n => n.completed);
+
         return {
           ...p,
-          notes: p.notes.map(n => {
-            if (n.id === noteId) {
-              const completed = !n.completed;
-              return {
-                ...n,
-                completed,
-                completedDate: completed ? new Date().toISOString() : null,
-              };
-            }
-            return n;
-          })
+          notes: updatedNotes,
+          status: allCompleted ? "Work Completed" : p.status // Automatically update status
         };
       }
       return p;
