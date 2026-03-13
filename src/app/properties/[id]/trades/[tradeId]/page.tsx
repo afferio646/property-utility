@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useDemo, TradeType } from "@/contexts/DemoContext";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   FaArrowLeft,
   FaCamera,
@@ -13,7 +14,8 @@ import {
   FaPencilAlt,
   FaPlus,
   FaFileInvoice,
-  FaExclamationTriangle
+  FaExclamationTriangle,
+  FaTools
 } from "react-icons/fa";
 
 export default function TradeDetailView() {
@@ -137,12 +139,24 @@ export default function TradeDetailView() {
       <header className="bg-[#0b101e] border-b border-gray-800 p-4 shrink-0 z-10 sticky top-0 shadow-lg">
         <div className="max-w-7xl mx-auto">
           {/* Navigation */}
-          <button
-            onClick={() => router.push(`/properties/${id}`)}
-            className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors mb-2 font-bold tracking-wider uppercase bg-transparent border border-gray-700 hover:border-gray-500 px-2 py-1 rounded shadow-sm hover:shadow-md w-fit"
-          >
-            <FaArrowLeft size={10} /> Back
-          </button>
+          <div className="flex justify-between items-start mb-2">
+            <button
+              onClick={() => router.push(`/properties/${id}`)}
+              className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors font-bold tracking-wider uppercase bg-transparent border border-gray-700 hover:border-gray-500 px-2 py-1 rounded shadow-sm hover:shadow-md w-fit"
+            >
+              <FaArrowLeft size={10} /> Back
+            </button>
+
+            {userRole === "manager" && (
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-1.5 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 border border-gray-600 px-3 py-1.5 rounded text-[10px] font-bold tracking-wider uppercase transition-colors whitespace-nowrap shadow-inner"
+                title="Open Admin Dashboard"
+              >
+                <FaTools size={10} /> Dashboard
+              </Link>
+            )}
+          </div>
 
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-2 mt-1">
             <div>

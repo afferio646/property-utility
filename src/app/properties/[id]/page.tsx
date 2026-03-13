@@ -72,12 +72,24 @@ export default function PropertyTrades() {
     <div className="min-h-screen bg-[#0b101e] text-gray-200 font-sans">
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Navigation / Header */}
-        <button
-          onClick={() => router.push("/")}
-          className="flex items-center gap-1.5 text-[10px] text-gray-400 hover:text-white transition-colors mb-4 font-bold tracking-widest uppercase"
-        >
-          <FaArrowLeft size={8} /> Back
-        </button>
+        <div className="flex justify-between items-start mb-4">
+          <button
+            onClick={() => router.push("/")}
+            className="flex items-center gap-1.5 text-[10px] text-gray-400 hover:text-white transition-colors font-bold tracking-widest uppercase"
+          >
+            <FaArrowLeft size={8} /> Back
+          </button>
+
+          {userRole === "manager" && (
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-1.5 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 border border-gray-600 px-3 py-1.5 rounded text-[10px] font-bold tracking-wider uppercase transition-colors whitespace-nowrap shadow-inner"
+              title="Open Admin Dashboard"
+            >
+              <FaTools size={10} /> Dashboard
+            </Link>
+          )}
+        </div>
 
         <div className="mb-6 pb-6 border-b border-gray-800/50">
           <h1 className="text-lg font-bold text-white tracking-widest uppercase mb-1 leading-tight">{property.name}</h1>
