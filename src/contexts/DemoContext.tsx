@@ -5,6 +5,11 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 // Types
 export type UserRole = "manager" | "lead" | "contractor" | "none";
 
+export interface AssignedProperty {
+  propertyId: string;
+  trades: TradeType[];
+}
+
 export interface User {
   id: string;
   name: string;
@@ -12,8 +17,8 @@ export interface User {
   phone: string;
   company: string;
   role: UserRole;
-  trades?: TradeType[]; // Specific to contractors/contractors
-  assignedProperties?: string[]; // Specific to contractors/contractors
+  trades?: TradeType[]; // Specific to contractors (their overall capabilities)
+  assignedProperties?: AssignedProperty[]; // Which properties they are assigned to, and for which trades
 }
 
 
@@ -65,8 +70,8 @@ interface DemoContextType {
   currentUser: User | null;
   setCurrentUser: (user: User | null) => void;
   users: User[];
-  addUser: (name: string, email: string, phone: string, company: string, role: UserRole, trades?: TradeType[], assignedProperties?: string[]) => void;
-  updateUserAssignedProperties: (userId: string, assignedProperties: string[]) => void;
+  addUser: (name: string, email: string, phone: string, company: string, role: UserRole, trades?: TradeType[], assignedProperties?: AssignedProperty[]) => void;
+  updateUserAssignedProperties: (userId: string, assignedProperties: AssignedProperty[]) => void;
   userRole: UserRole;
   setUserRole: (role: UserRole) => void;
   updatePropertyName: (propertyId: string, name: string) => void;
@@ -162,7 +167,7 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
   const [properties, setProperties] = useState<Property[]>(initialProperties);
   const [photos, setPhotos] = useState<Photo[]>(initialPhotos);
 
-  const addUser = (name: string, email: string, phone: string, company: string, role: UserRole, trades?: TradeType[], assignedProperties?: string[]) => {
+  const addUser = (name: string, email: string, phone: string, company: string, role: UserRole, trades?: TradeType[], assignedProperties?: AssignedProperty[]) => {
     const newUser: User = {
       id: Date.now().toString(),
       name,
@@ -180,7 +185,7 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateUserAssignedProperties = (userId: string, assignedProperties: string[]) => {
+  const updateUserAssignedProperties = (userId: string, assignedProperties: AssignedProperty[]) => {
     setUsers(users.map(u => u.id === userId ? { ...u, assignedProperties } : u));
   };
 
