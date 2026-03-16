@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
 // Types
 export type UserRole = "manager" | "lead" | "contractor" | "none";
@@ -64,6 +64,7 @@ export interface Property {
   createdAt: string;
   imageUrl?: string;
   customTrades?: CustomTrade[];
+  isArchived?: boolean;
 }
 
 interface DemoContextType {
@@ -79,6 +80,7 @@ interface DemoContextType {
   addProperty: (name: string, address?: string, imageUrl?: string) => void;
   deleteProperty: (propertyId: string) => void;
   addCustomTrade: (propertyId: string, label: string) => void;
+  togglePropertyArchive: (propertyId: string) => void;
   photos: Photo[];
   addPhoto: (propertyId: string, trade: TradeType, url: string) => void;
   deletePhoto: (photoId: string) => void;
@@ -167,6 +169,44 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
   const [properties, setProperties] = useState<Property[]>(initialProperties);
   const [photos, setPhotos] = useState<Photo[]>(initialPhotos);
 
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Initialize from local storage if available
+  useEffect(() => {
+    try {
+      const storedUsers = localStorage.getItem("demo_users");
+      const storedProperties = localStorage.getItem("demo_properties");
+      const storedPhotos = localStorage.getItem("demo_photos");
+      const storedCurrentUser = localStorage.getItem("demo_currentUser");
+
+      if (storedUsers) setUsers(JSON.parse(storedUsers));
+      if (storedProperties) setProperties(JSON.parse(storedProperties));
+      if (storedPhotos) setPhotos(JSON.parse(storedPhotos));
+      if (storedCurrentUser) setCurrentUser(JSON.parse(storedCurrentUser));
+
+      const storedUserRole = localStorage.getItem("demo_userRole");
+      if (storedUserRole) setUserRole(storedUserRole as UserRole);
+    } catch (e) {
+      console.error("Failed to parse local storage data", e);
+    } finally {
+      setIsLoaded(true);
+    }
+  }, []);
+
+  // Save to local storage on change
+  useEffect(() => {
+    if (!isLoaded) return;
+    localStorage.setItem("demo_users", JSON.stringify(users));
+    localStorage.setItem("demo_properties", JSON.stringify(properties));
+    localStorage.setItem("demo_photos", JSON.stringify(photos));
+    if (currentUser) {
+      localStorage.setItem("demo_currentUser", JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem("demo_currentUser");
+    }
+    localStorage.setItem("demo_userRole", userRole);
+  }, [users, properties, photos, currentUser, userRole, isLoaded]);
+
   const addUser = (name: string, email: string, phone: string, company: string, role: UserRole, trades?: TradeType[], assignedProperties?: AssignedProperty[]) => {
     const newUser: User = {
       id: Date.now().toString(),
@@ -223,6 +263,15 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
       customTrades: []
     };
     setProperties([...properties, newProp]);
+  };
+
+  const togglePropertyArchive = (propertyId: string) => {
+    setProperties(properties.map(p => {
+      if (p.id === propertyId) {
+        return { ...p, isArchived: !p.isArchived };
+      }
+      return p;
+    }));
   };
 
   const deleteProperty = (propertyId: string) => {
@@ -382,6 +431,7 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
         properties,
         addProperty,
         deleteProperty,
+        togglePropertyArchive,
         addCustomTrade,
         photos,
         addPhoto,

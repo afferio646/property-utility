@@ -160,7 +160,12 @@ export default function TradeDetailView() {
 
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-2 mt-1">
             <div>
-              <h1 className="text-xl font-extrabold text-white tracking-widest uppercase mb-0.5 drop-shadow-md leading-tight">{tradeId} TRADE</h1>
+              <h1 className="text-xl font-extrabold text-white tracking-widest uppercase mb-0.5 drop-shadow-md leading-tight">
+                {tradeId} TRADE
+                {property.isArchived && (
+                  <span className="ml-2 text-[10px] text-red-500 border border-red-500 px-1 py-0.5 rounded align-middle bg-red-500/10">ARCHIVED (READ-ONLY)</span>
+                )}
+              </h1>
               <p className="text-sm text-gray-300 font-medium tracking-wide leading-tight">
                 {property.name}
               </p>
@@ -171,12 +176,14 @@ export default function TradeDetailView() {
               )}
             </div>
 
-            <button
-              onClick={() => setShowAddPhoto(!showAddPhoto)}
-              className="flex items-center gap-1.5 bg-gradient-to-b from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white px-3 py-1.5 rounded text-[10px] font-bold tracking-wider uppercase transition-all shadow-md border border-blue-400/50 hover:shadow-lg mt-2 md:mt-0"
-            >
-              <FaCamera size={12} /> Add New Task Card
-            </button>
+            {!property.isArchived && (
+              <button
+                onClick={() => setShowAddPhoto(!showAddPhoto)}
+                className="flex items-center gap-1.5 bg-gradient-to-b from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white px-3 py-1.5 rounded text-[10px] font-bold tracking-wider uppercase transition-all shadow-md border border-blue-400/50 hover:shadow-lg mt-2 md:mt-0"
+              >
+                <FaCamera size={12} /> Add New Task Card
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -247,7 +254,7 @@ export default function TradeDetailView() {
               return (
                 <div key={photo.id} className={`p-[2px] rounded-lg shadow-sm hover:shadow-md transition-all duration-200 group/taskcard relative ${photo.hasAlert ? "bg-gradient-to-b from-red-500 to-red-700 animate-pulse-slow" : "bg-gradient-to-b from-gray-200 to-gray-400"}`}>
                   <div className="bg-gradient-to-b from-white to-gray-50 rounded-md overflow-hidden flex flex-col p-2 h-full relative border border-white/60">
-                    {userRole === "manager" && (
+                    {userRole === "manager" && !property.isArchived && (
                       <button
                         onClick={(e) => {
                           e.preventDefault();
@@ -276,45 +283,49 @@ export default function TradeDetailView() {
                       <div className="absolute inset-0 shadow-[inset_0_1px_4px_rgba(0,0,0,0.1)] pointer-events-none"></div>
 
                       {/* Hover Overlay with Add Photo Button */}
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/photo:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 z-10 backdrop-blur-[1px]">
-                         <label
-                           className="bg-white/90 hover:bg-white text-gray-900 rounded-full p-2 shadow-lg hover:scale-110 transition-transform flex items-center justify-center cursor-pointer"
-                           title="Add additional photo"
-                         >
-                           <input
-                             type="file"
-                             accept="image/*,capture=camera"
-                             className="hidden"
-                             onChange={(e) => {
-                               const file = e.target.files?.[0];
-                               if (file) alert("Photo selected: " + file.name + ". In a full app, this would append the photo to this task card.");
-                             }}
-                           />
-                           <FaPlus size={10} />
-                         </label>
-                         <span className="text-[8px] font-bold text-white uppercase tracking-wider pointer-events-none">Add Photo</span>
-                      </div>
+                      {!property.isArchived && (
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/photo:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 z-10 backdrop-blur-[1px]">
+                           <label
+                             className="bg-white/90 hover:bg-white text-gray-900 rounded-full p-2 shadow-lg hover:scale-110 transition-transform flex items-center justify-center cursor-pointer"
+                             title="Add additional photo"
+                           >
+                             <input
+                               type="file"
+                               accept="image/*,capture=camera"
+                               className="hidden"
+                               onChange={(e) => {
+                                 const file = e.target.files?.[0];
+                                 if (file) alert("Photo selected: " + file.name + ". In a full app, this would append the photo to this task card.");
+                               }}
+                             />
+                             <FaPlus size={10} />
+                           </label>
+                           <span className="text-[8px] font-bold text-white uppercase tracking-wider pointer-events-none">Add Photo</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Center: Notes & Checkmarks */}
                     <div className="sm:ml-3 flex-1 flex flex-col gap-1.5 min-w-0 py-1">
                       {/* Add Note Form */}
-                      <form onSubmit={(e) => handleAddNote(e, photo.id)} className="flex gap-1.5 w-full">
-                        <input
-                          type="text"
-                          placeholder="Add new task..."
-                          className="flex-1 bg-white border border-gray-300 text-gray-900 text-[11px] p-1.5 rounded shadow-inner focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
-                          value={newNotes[photo.id] || ""}
-                          onChange={(e) => updateNewNoteText(photo.id, e.target.value)}
-                        />
-                        <button
-                          type="submit"
-                          className="bg-gradient-to-b from-blue-100 to-blue-200 text-blue-700 border border-blue-300 px-2 rounded shadow-sm hover:from-blue-500 hover:to-blue-600 hover:text-white transition-all disabled:opacity-50 disabled:grayscale"
-                          disabled={!(newNotes[photo.id] || "").trim()}
-                        >
-                          <FaPlus size={10} />
-                        </button>
-                      </form>
+                      {!property.isArchived && (
+                        <form onSubmit={(e) => handleAddNote(e, photo.id)} className="flex gap-1.5 w-full">
+                          <input
+                            type="text"
+                            placeholder="Add new task..."
+                            className="flex-1 bg-white border border-gray-300 text-gray-900 text-[11px] p-1.5 rounded shadow-inner focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
+                            value={newNotes[photo.id] || ""}
+                            onChange={(e) => updateNewNoteText(photo.id, e.target.value)}
+                          />
+                          <button
+                            type="submit"
+                            className="bg-gradient-to-b from-blue-100 to-blue-200 text-blue-700 border border-blue-300 px-2 rounded shadow-sm hover:from-blue-500 hover:to-blue-600 hover:text-white transition-all disabled:opacity-50 disabled:grayscale"
+                            disabled={!(newNotes[photo.id] || "").trim()}
+                          >
+                            <FaPlus size={10} />
+                          </button>
+                        </form>
+                      )}
 
                       {/* Checklist */}
                       {photo.notes.length > 0 && (
@@ -323,15 +334,16 @@ export default function TradeDetailView() {
                             <div key={note.id} className="flex flex-col justify-between gap-1 group/note p-1.5 hover:bg-gray-100 rounded transition-colors w-full border-b border-gray-100 last:border-0">
                               <div className="flex items-start gap-1.5 flex-1 min-w-0">
                                 <button
-                                  onClick={() => toggleNote(photo.id, note.id)}
+                                  onClick={() => !property.isArchived && toggleNote(photo.id, note.id)}
                                   className={`mt-0.5 flex-shrink-0 transition-colors drop-shadow-sm ${
-                                    note.completed ? "text-green-500" : "text-gray-400 hover:text-blue-500"
-                                  }`}
+                                    note.completed ? "text-green-500" : "text-gray-400"
+                                  } ${!property.isArchived ? "hover:text-blue-500 cursor-pointer" : "cursor-default"}`}
+                                  disabled={property.isArchived}
                                 >
                                   {note.completed ? <FaCheckCircle size={12} /> : <FaRegCircle size={12} />}
                                 </button>
 
-                                {editingNoteId === note.id ? (
+                                {editingNoteId === note.id && !property.isArchived ? (
                                   <div className="flex-1 flex gap-1 w-full">
                                     <input
                                       type="text"
@@ -345,9 +357,9 @@ export default function TradeDetailView() {
                                   </div>
                                 ) : (
                                   <span
-                                    className={`text-[11px] font-medium truncate flex-1 cursor-pointer leading-tight ${note.completed ? "text-gray-400 line-through" : "text-gray-800 hover:text-blue-600 transition-colors"}`}
-                                    onClick={() => startEditing(note.id, note.text)}
-                                    title="Click to edit task"
+                                    className={`text-[11px] font-medium truncate flex-1 leading-tight ${note.completed ? "text-gray-400 line-through" : "text-gray-800" } ${!property.isArchived ? "hover:text-blue-600 transition-colors cursor-pointer" : "cursor-default"}`}
+                                    onClick={() => !property.isArchived && startEditing(note.id, note.text)}
+                                    title={!property.isArchived ? "Click to edit task" : ""}
                                   >
                                     {note.text}
                                   </span>
@@ -361,22 +373,24 @@ export default function TradeDetailView() {
                                     <span>Completed: {formatDate(note.completedDate)}</span>
                                   )}
                                 </div>
-                                <div className="flex items-center gap-0.5 opacity-0 group-hover/note:opacity-100 transition-opacity">
-                                  <button
-                                    onClick={(e) => { e.stopPropagation(); startEditing(note.id, note.text); }}
-                                    className="text-gray-300 hover:text-blue-500 p-0.5"
-                                    title="Edit task"
-                                  >
-                                    <FaPencilAlt size={10} />
-                                  </button>
-                                  <button
-                                    onClick={(e) => { e.stopPropagation(); deleteNote(photo.id, note.id); }}
-                                    className="text-gray-300 hover:text-red-500 p-0.5"
-                                    title="Delete task"
-                                  >
-                                    <FaTrash size={10} />
-                                  </button>
-                                </div>
+                                {!property.isArchived && (
+                                  <div className="flex items-center gap-0.5 opacity-0 group-hover/note:opacity-100 transition-opacity">
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); startEditing(note.id, note.text); }}
+                                      className="text-gray-300 hover:text-blue-500 p-0.5"
+                                      title="Edit task"
+                                    >
+                                      <FaPencilAlt size={10} />
+                                    </button>
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); deleteNote(photo.id, note.id); }}
+                                      className="text-gray-300 hover:text-red-500 p-0.5"
+                                      title="Delete task"
+                                    >
+                                      <FaTrash size={10} />
+                                    </button>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           ))}
@@ -386,25 +400,27 @@ export default function TradeDetailView() {
                       {/* ALERTS SECTION (Bottom Left of Content) */}
                       <div className="mt-2 flex flex-col gap-1.5">
                         {!photo.hasAlert ? (
-                          <div className="flex gap-1 items-center w-full">
-                            <input
-                              type="text"
-                              placeholder="Type alert reason here..."
-                              value={alertNotes[photo.id] || ""}
-                              onChange={(e) => setAlertNotes({ ...alertNotes, [photo.id]: e.target.value })}
-                              className="bg-red-50/50 border border-red-200 text-gray-800 text-[11px] px-1.5 py-1 rounded flex-1 focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-400"
-                            />
-                            <button
-                              onClick={() => {
-                                toggleAlert(photo.id, alertNotes[photo.id] || "Contractor initiated an alert for this task.");
-                                setAlertNotes({ ...alertNotes, [photo.id]: "" });
-                              }}
-                              className="bg-gray-200 hover:bg-red-100 text-gray-700 hover:text-red-600 border border-gray-300 px-2 py-1 rounded text-[10px] font-bold tracking-wider uppercase flex items-center gap-1 transition-all"
-                            >
-                              <FaExclamationTriangle size={10} />
-                              Alert
-                            </button>
-                          </div>
+                          !property.isArchived && (
+                            <div className="flex gap-1 items-center w-full">
+                              <input
+                                type="text"
+                                placeholder="Type alert reason here..."
+                                value={alertNotes[photo.id] || ""}
+                                onChange={(e) => setAlertNotes({ ...alertNotes, [photo.id]: e.target.value })}
+                                className="bg-red-50/50 border border-red-200 text-gray-800 text-[11px] px-1.5 py-1 rounded flex-1 focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-400"
+                              />
+                              <button
+                                onClick={() => {
+                                  toggleAlert(photo.id, alertNotes[photo.id] || "Contractor initiated an alert for this task.");
+                                  setAlertNotes({ ...alertNotes, [photo.id]: "" });
+                                }}
+                                className="bg-gray-200 hover:bg-red-100 text-gray-700 hover:text-red-600 border border-gray-300 px-2 py-1 rounded text-[10px] font-bold tracking-wider uppercase flex items-center gap-1 transition-all"
+                              >
+                                <FaExclamationTriangle size={10} />
+                                Alert
+                              </button>
+                            </div>
+                          )
                         ) : (
                           <div className="flex flex-col gap-1 w-full">
                             {/* Contractor Alert Display */}
@@ -420,7 +436,7 @@ export default function TradeDetailView() {
                                 <div className="text-[10px] text-green-800 font-medium">{photo.managerAnswer}</div>
                               </div>
                             ) : (
-                              userRole === "manager" && (
+                              userRole === "manager" && !property.isArchived ? (
                                 <div className="flex gap-1 items-center">
                                   <input
                                     type="text"
@@ -439,16 +455,22 @@ export default function TradeDetailView() {
                                     Answer
                                   </button>
                                 </div>
+                              ) : (
+                                !property.isArchived && <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block w-full text-center p-1 border border-dashed border-gray-300 rounded">
+                                  Awaiting Manager Response
+                                </span>
                               )
                             )}
 
                             {/* Reset Button (Bottom) */}
-                            <button
-                              onClick={() => resetAlert(photo.id)}
-                              className="mt-1 self-start text-[9px] font-bold text-gray-500 hover:text-gray-700 uppercase tracking-wider underline decoration-gray-400 underline-offset-2 transition-colors"
-                            >
-                              Reset Alert
-                            </button>
+                            {!property.isArchived && (
+                              <button
+                                onClick={() => resetAlert(photo.id)}
+                                className="mt-1 self-start text-[9px] font-bold text-gray-500 hover:text-gray-700 uppercase tracking-wider underline decoration-gray-400 underline-offset-2 transition-colors"
+                              >
+                                Reset Alert
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>
@@ -467,6 +489,7 @@ export default function TradeDetailView() {
                           className={`text-[10px] w-full sm:w-auto px-2 py-1.5 rounded appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-white/50 transition-colors border-none ${statusSelectStyle}`}
                           value={photo.status}
                           onChange={(e) => updatePhotoStatus(photo.id, e.target.value as "Need to Inspect" | "Work to be Done" | "Work Started" | "Work Completed")}
+                          disabled={property.isArchived}
                         >
                           <option value="Need to Inspect" className="bg-gray-800 text-white">NEED TO INSPECT</option>
                           <option value="Work to be Done" className="bg-gray-800 text-white">WORK TO BE DONE</option>

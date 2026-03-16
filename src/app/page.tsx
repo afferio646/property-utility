@@ -150,7 +150,7 @@ export default function Home() {
 
         {/* Properties Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 justify-items-center">
-          {properties.map((prop) => {
+          {properties.filter(p => !p.isArchived).map((prop) => {
             // Determine property status based on its trades (photos)
             const propertyPhotos = photos.filter(p => p.propertyId === prop.id);
             let status = 'default';
