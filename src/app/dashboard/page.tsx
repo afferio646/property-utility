@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useDemo } from "@/contexts/DemoContext";
+import { useDemo, TradeType } from "@/contexts/DemoContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaArrowLeft, FaExclamationTriangle, FaTrash } from "react-icons/fa";
 
 export default function Dashboard() {
-  const { users, properties, photos, userRole, updateUserAssignedProperties, updateUserRole, deleteUser } = useDemo();
+  const { users, properties, photos, userRole, updateUserAssignedProperties, updateUserRole, deleteUser, togglePropertyArchive } = useDemo();
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState<"directory" | "database" | "users">("directory");
+  const [activeTab, setActiveTab] = useState<"directory" | "database" | "users" | "archived">("directory");
   const [expandedProperty, setExpandedProperty] = useState<string | null>(null);
   const [expandedTrade, setExpandedTrade] = useState<string | null>(null);
 
@@ -26,9 +26,16 @@ export default function Dashboard() {
     );
   }
 
-  const totalProperties = properties.length;
-  const totalPhotos = photos.length;
-  const alertPhotos = photos.filter(p => p.hasAlert || p.managerAnswer);
+  const activeProperties = properties.filter(p => !p.isArchived);
+  const totalProperties = activeProperties.length;
+  const totalPhotos = photos.filter(photo => {
+     const prop = properties.find(p => p.id === photo.propertyId);
+     return prop && !prop.isArchived;
+  }).length;
+  const alertPhotos = photos.filter(p => {
+     const prop = properties.find(prop => prop.id === p.propertyId);
+     return prop && !prop.isArchived && (p.hasAlert || p.managerAnswer);
+  });
   const activeAlerts = alertPhotos.filter(p => !p.managerAnswer).length;
 
   const contractors = users.filter(u => u.role === "contractor" || u.role === "lead");
@@ -105,6 +112,16 @@ export default function Dashboard() {
           >
             System Users
           </button>
+          <button
+            onClick={() => setActiveTab("archived")}
+            className={`px-2 py-1 text-[10px] font-bold uppercase whitespace-nowrap transition-colors ${
+              activeTab === "archived"
+                ? "text-[#6b7280] border-b-2 border-[#6b7280]"
+                : "text-[#9ca3af] hover:text-white"
+            }`}
+          >
+            Archived Properties
+          </button>
         </div>
 
         {/* Tab Content */}
@@ -154,12 +171,24 @@ export default function Dashboard() {
 
             {/* Properties Accordion List */}
             <div className="flex flex-col gap-2">
-              {properties.map(property => {
+              {properties.filter(p => !p.isArchived).map(property => {
                  return (
                     <div key={property.id} className="bg-[#1f2937] border border-[#4b5563] rounded overflow-hidden">
-                       <div className="bg-[#4b5563]/50 p-2 border-b border-[#374151]">
-                          <h3 className="font-bold text-xs text-white">{property.name}</h3>
-                          {property.address && <p className="text-[8px] text-gray-400 mt-0.5">{property.address}</p>}
+                       <div className="bg-[#4b5563]/50 p-2 border-b border-[#374151] flex justify-between items-center">
+                          <div>
+                            <h3 className="font-bold text-xs text-white">{property.name}</h3>
+                            {property.address && <p className="text-[8px] text-gray-400 mt-0.5">{property.address}</p>}
+                          </div>
+                          <button
+                            onClick={() => {
+                              if(window.confirm(`Are you sure you want to archive "${property.name}"?`)) {
+                                togglePropertyArchive(property.id);
+                              }
+                            }}
+                            className="bg-[#374151] hover:bg-[#4b5563] text-gray-300 border border-[#6b7280] px-2 py-1 rounded text-[8px] font-bold transition whitespace-nowrap ml-2"
+                          >
+                            Archive Property
+                          </button>
                        </div>
 
                        <div className="p-2 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-9 gap-1.5">
@@ -524,6 +553,145 @@ export default function Dashboard() {
                >
                   Manage Users & Permissions
                </button>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: Archived Properties */}
+        {activeTab === "archived" && (
+          <div className="bg-[#374151] p-2 md:p-3 rounded shadow-sm border-l-2 border-[#6b7280] flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
+              {properties.filter(p => p.isArchived).map(property => {
+                 return (
+                    <div key={property.id} className="bg-[#1f2937] border border-[#4b5563] rounded overflow-hidden opacity-80">
+                       <div className="bg-[#4b5563]/50 p-2 border-b border-[#374151] flex justify-between items-center">
+                          <div>
+                            <h3 className="font-bold text-xs text-gray-300">{property.name} <span className="text-[9px] text-gray-500 ml-1">(ARCHIVED)</span></h3>
+                            {property.address && <p className="text-[8px] text-gray-500 mt-0.5">{property.address}</p>}
+                          </div>
+                          <button
+                            onClick={() => {
+                              if(window.confirm(`Are you sure you want to unarchive "${property.name}"?`)) {
+                                togglePropertyArchive(property.id);
+                              }
+                            }}
+                            className="bg-[#374151] hover:bg-[#4b5563] text-gray-300 border border-[#6b7280] px-2 py-1 rounded text-[8px] font-bold transition whitespace-nowrap ml-2"
+                          >
+                            Unarchive
+                          </button>
+                       </div>
+
+                       <div className="p-2 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-9 gap-1.5">
+                          {allTrades.map(trade => {
+                             // Find contractors assigned to this property AND this specific trade
+                             const assignedContractors = contractors.filter(c => {
+                                const propAssignment = c.assignedProperties?.find(ap => ap.propertyId === property.id);
+                                return propAssignment && propAssignment.trades.includes(trade as TradeType);
+                             });
+
+                             // Check for alerts specifically for this property and trade
+                             const activeAlertPhoto = photos.find(p => p.propertyId === property.id && p.trade === trade && p.hasAlert && !p.managerAnswer);
+                             const answeredAlertPhoto = photos.find(p => p.propertyId === property.id && p.trade === trade && p.managerAnswer);
+
+                             const hasActiveAlert = !!activeAlertPhoto;
+                             const hasAnsweredAlert = !hasActiveAlert && !!answeredAlertPhoto;
+
+                             const isActive = assignedContractors.length > 0 || hasActiveAlert || hasAnsweredAlert;
+
+                             // Ensure contractor who triggered alert is in the list even if no longer formally assigned
+                             const displayContractors = [...assignedContractors];
+                             const relevantAlert = activeAlertPhoto || answeredAlertPhoto;
+                             if (relevantAlert && relevantAlert.contractorId && !displayContractors.find(c => c.id === relevantAlert.contractorId)) {
+                                const alertContractor = contractors.find(c => c.id === relevantAlert.contractorId);
+                                if (alertContractor) {
+                                   displayContractors.push(alertContractor);
+                                }
+                             }
+
+                             const isExpanded = expandedProperty === property.id && expandedTrade === trade;
+
+                             return (
+                                <div key={trade} className="flex flex-col">
+                                   <button
+                                      onClick={() => {
+                                         if (isActive) {
+                                            if (isExpanded) {
+                                               setExpandedProperty(null);
+                                               setExpandedTrade(null);
+                                            } else {
+                                               setExpandedProperty(property.id);
+                                               setExpandedTrade(trade);
+                                            }
+                                         }
+                                      }}
+                                      className={`px-1 py-1 rounded text-[8px] font-bold uppercase tracking-wider text-center transition-all border ${
+                                         hasActiveAlert ? 'bg-red-600/50 border-red-500/50 text-gray-300 cursor-pointer' :
+                                         hasAnsweredAlert || isActive ? 'bg-[#10b981]/10 border-[#10b981]/30 text-gray-400 cursor-pointer hover:bg-[#10b981]/20' :
+                                         'bg-[#374151]/30 border-[#4b5563]/50 text-gray-600 cursor-not-allowed'
+                                      }`}
+                                      disabled={!isActive}
+                                   >
+                                      <div className="flex items-center justify-center gap-1">
+                                         {hasActiveAlert && <FaExclamationTriangle size={8} />}
+                                         {trade}
+                                      </div>
+                                   </button>
+
+                                   {/* Expanded Accordion Area */}
+                                   {isExpanded && isActive && (
+                                      <div className="col-span-3 sm:col-span-4 md:col-span-5 lg:col-span-6 xl:col-span-9 mt-1.5 bg-[#111827] border border-gray-600 rounded p-1.5 order-last shadow-xl relative w-full opacity-90">
+                                         <div className="text-[8px] text-gray-400 font-bold uppercase mb-1.5 border-b border-gray-700 pb-0.5">{trade} Contractors (Archive)</div>
+                                         <div className="flex flex-col gap-1.5">
+                                            {displayContractors.map(c => {
+                                               const contractorActiveAlert = photos.find(p => p.propertyId === property.id && p.trade === trade && p.hasAlert && !p.managerAnswer && p.contractorId === c.id);
+                                               const contractorAnsweredAlert = photos.find(p => p.propertyId === property.id && p.trade === trade && p.managerAnswer && p.contractorId === c.id);
+
+                                               return (
+                                                  <div key={c.id} className="flex flex-wrap items-center justify-between gap-1.5 bg-[#1f2937] p-1.5 rounded border border-[#374151]">
+                                                     <div className="flex flex-col">
+                                                        <span className="text-[10px] font-bold text-gray-300">{c.company}</span>
+                                                        <span className="text-[8px] text-gray-500">{c.name} • {c.phone}</span>
+                                                     </div>
+                                                     {contractorActiveAlert && (
+                                                        <Link
+                                                          href={`/properties/${property.id}/trades/${trade}`}
+                                                          className="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 bg-red-600/50 text-gray-300 rounded text-[8px] font-bold border border-red-500/50 transition-all"
+                                                        >
+                                                          <FaExclamationTriangle size={8} /> ARCHIVED ALERT
+                                                        </Link>
+                                                     )}
+                                                     {!contractorActiveAlert && contractorAnsweredAlert && (
+                                                        <Link
+                                                          href={`/properties/${property.id}/trades/${trade}`}
+                                                          className="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 bg-green-600/10 text-gray-400 rounded text-[8px] font-bold border border-green-500/30 transition-all"
+                                                        >
+                                                          ANSWERED
+                                                        </Link>
+                                                     )}
+                                                     {!contractorActiveAlert && !contractorAnsweredAlert && (
+                                                        <Link
+                                                          href={`/properties/${property.id}/trades/${trade}`}
+                                                          className="shrink-0 bg-[#374151] hover:bg-[#4b5563] text-gray-300 px-1.5 py-0.5 rounded text-[8px] font-bold border border-[#6b7280] transition-colors"
+                                                        >
+                                                          VIEW HISTORY
+                                                        </Link>
+                                                     )}
+                                                  </div>
+                                               );
+                                            })}
+                                         </div>
+                                      </div>
+                                   )}
+                                </div>
+                             );
+                          })}
+                       </div>
+                    </div>
+                 );
+              })}
+              {properties.filter(p => p.isArchived).length === 0 && (
+                 <div className="text-center p-4 text-gray-500 text-xs">No archived properties found.</div>
+              )}
             </div>
           </div>
         )}
