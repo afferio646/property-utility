@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useDemo, TradeType } from "@/contexts/DemoContext";
+
+import { useApp } from "@/hooks/useApp";
+import { TradeType } from "@/contexts/DemoContext";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -36,8 +38,9 @@ export default function TradeDetailView() {
     toggleNote,
     deleteNote,
     editNote,
-    userRole
-  } = useDemo();
+    userRole,
+    isDemoMode
+  } = useApp();
 
   const router = useRouter();
 
@@ -233,12 +236,22 @@ export default function TradeDetailView() {
               type="file"
               accept="image/*"
               className="flex-1 bg-[#0b101e] border border-gray-600 text-gray-300 p-1.5 text-xs rounded shadow-inner focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-bold file:uppercase file:bg-gray-800 file:text-gray-300 hover:file:bg-gray-700 cursor-pointer"
-              onChange={(e) => {
+              onChange={async (e) => {
                 const file = e.target.files?.[0];
                 if (file) {
-                  // Create a local object URL to display the image immediately
-                  const localUrl = URL.createObjectURL(file);
-                  setNewPhotoUrl(localUrl);
+                  if (isDemoMode) {
+                    const localUrl = URL.createObjectURL(file);
+                    setNewPhotoUrl(localUrl);
+                    return;
+                  }
+                  try {
+                    const { uploadImageToStorage } = await import('@/lib/firebase/storage');
+                    const url = await uploadImageToStorage(file, 'photos');
+                    setNewPhotoUrl(url);
+                  } catch (err) {
+                    console.error("Upload error", err);
+                    alert("Failed to upload photo.");
+                  }
                 }
               }}
               required
@@ -332,11 +345,22 @@ export default function TradeDetailView() {
                                  type="file"
                                  accept="image/*,capture=camera"
                                  className="hidden"
-                                 onChange={(e) => {
+                                 onChange={async (e) => {
                                    const file = e.target.files?.[0];
                                    if (file) {
-                                      const localUrl = URL.createObjectURL(file);
-                                      addPhotoToGallery(photo.id, localUrl);
+                                      if (isDemoMode) {
+                                        const localUrl = URL.createObjectURL(file);
+                                        await addPhotoToGallery(photo.id, localUrl);
+                                        return;
+                                      }
+                                      try {
+                                        const { uploadImageToStorage } = await import('@/lib/firebase/storage');
+                                        const url = await uploadImageToStorage(file, 'galleries');
+                                        await addPhotoToGallery(photo.id, url);
+                                      } catch (err) {
+                                        console.error("Upload error", err);
+                                        alert("Failed to upload photo.");
+                                      }
                                    }
                                  }}
                                />

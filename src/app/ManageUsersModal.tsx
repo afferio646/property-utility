@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { useDemo, UserRole } from "@/contexts/DemoContext";
+
+import { useApp } from "@/hooks/useApp";
+import { UserRole } from "@/contexts/DemoContext";
 import { FaUserPlus, FaTimes, FaUserCog, FaTrash } from "react-icons/fa";
 
 export default function ManageUsersModal() {
-  const { userRole, users, addUser, updateUserRole, deleteUser } = useDemo();
+  const { userRole, users, addUser, updateUserRole, deleteUser } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

@@ -26,9 +26,11 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
-import { DemoProvider } from "@/contexts/DemoContext";
+import { AppProvider } from "@/contexts/AppProvider";
+import { AuthProvider } from "@/contexts/AuthContext";
 import SignUpModal from "./SignUpModal";
-import RoleSwitcher from "./RoleSwitcher";
+import LoginModal from "./LoginModal";
+import ConditionalRoleSwitcher from "./ConditionalRoleSwitcher";
 import ManageUsersModal from "./ManageUsersModal";
 
 export default function RootLayout({
@@ -41,14 +43,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0b101e]`}
       >
-        <DemoProvider>
-          <main>
-            {children}
-          </main>
-          <SignUpModal />
-          <RoleSwitcher />
-          <ManageUsersModal />
-        </DemoProvider>
+        <AuthProvider>
+          <AppProvider>
+            <main>
+              {children}
+            </main>
+            <SignUpModal />
+            <LoginModal />
+            <ConditionalRoleSwitcher />
+            <ManageUsersModal />
+          </AppProvider>
+        </AuthProvider>
       </body>
     </html>
   );

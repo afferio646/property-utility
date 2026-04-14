@@ -1,9 +1,11 @@
 "use client";
 
-import { useDemo, UserRole } from "@/contexts/DemoContext";
+
+import { useApp } from "@/hooks/useApp";
+import { UserRole } from "@/contexts/DemoContext";
 
 export default function RoleSwitcher() {
-  const { userRole, setUserRole } = useDemo();
+  const { userRole, setUserRole } = useApp();
 
   return (
     <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-black/80 text-white px-3 py-2 rounded-full border border-gray-600 shadow-xl backdrop-blur-md">

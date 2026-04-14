@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { useDemo, TradeType } from "@/contexts/DemoContext";
+
+import { useApp } from "@/hooks/useApp";
+import { TradeType } from "@/contexts/DemoContext";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import {
@@ -39,7 +41,7 @@ const tradeConfig: Omit<TradeIconProps, "propertyId">[] = [
 
 export default function PropertyTrades() {
   const { id } = useParams() as { id: string };
-  const { properties, photos, userRole, addCustomTrade } = useDemo();
+  const { properties, photos, userRole, addCustomTrade } = useApp();
   const router = useRouter();
 
   const [isAddingTrade, setIsAddingTrade] = useState(false);

@@ -1,13 +1,16 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { useDemo } from "@/contexts/DemoContext";
+
+import { useApp } from "@/hooks/useApp";
+import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { FaPlus, FaCamera, FaImage, FaTrash, FaExclamationTriangle, FaTools } from "react-icons/fa";
 import Image from "next/image";
 
 export default function Home() {
-  const { properties, addProperty, deleteProperty, userRole, photos, updatePropertyName, currentUser } = useDemo();
+  const { properties, addProperty, deleteProperty, userRole, photos, updatePropertyName, currentUser, isDemoMode } = useApp();
+  const { user, signOut } = useAuth();
 
   // Modal State
   const [showAddForm, setShowAddForm] = useState(false);
@@ -19,13 +22,27 @@ export default function Home() {
   const [editingName, setEditingName] = useState("");
 
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // In a real app, we would upload this to a server/CDN.
-      // Here, we use a local object URL to mock it immediately.
-      const url = URL.createObjectURL(file);
-      setNewPropImage(url);
+      if (isDemoMode) {
+        const url = URL.createObjectURL(file);
+        setNewPropImage(url);
+        return;
+      }
+      setIsUploading(true);
+      try {
+        const { uploadImageToStorage } = await import('@/lib/firebase/storage');
+        const url = await uploadImageToStorage(file, 'properties');
+        setNewPropImage(url);
+      } catch (error) {
+        console.error("Upload failed", error);
+        alert("Image upload failed.");
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
@@ -91,7 +108,6 @@ export default function Home() {
 
             {userRole === "manager" && (
               <>
-
                 <Link
                   href="/dashboard"
                   className="flex items-center gap-1.5 bg-gray-800 hover:bg-gray-700 text-blue-400 hover:text-blue-300 border border-gray-600 px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors whitespace-nowrap shadow-inner"
@@ -116,15 +132,35 @@ export default function Home() {
                 </button>
               </>
             )}
-            <button
-              onClick={() => {
-                const event = new Event("open-signup");
-                window.dispatchEvent(event);
-              }}
-              className="bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white px-3 py-1.5 rounded text-xs font-bold shadow-md transition-colors whitespace-nowrap ml-auto sm:ml-2"
-            >
-              Sign Up
-            </button>
+            {(!isDemoMode && !user) ? (
+              <>
+                <button
+                  onClick={() => {
+                    const event = new Event("open-login");
+                    window.dispatchEvent(event);
+                  }}
+                  className="bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white px-3 py-1.5 rounded text-xs font-bold shadow-md transition-colors whitespace-nowrap ml-auto sm:ml-2"
+                >
+                  Log In
+                </button>
+                <button
+                  onClick={() => {
+                    const event = new Event("open-signup");
+                    window.dispatchEvent(event);
+                  }}
+                  className="bg-blue-600 border border-blue-500 hover:bg-blue-500 text-white px-3 py-1.5 rounded text-xs font-bold shadow-md transition-colors whitespace-nowrap sm:ml-2"
+                >
+                  Sign Up
+                </button>
+              </>
+            ) : (!isDemoMode && user) ? (
+              <button
+                onClick={() => signOut()}
+                className="bg-red-600 border border-red-500 hover:bg-red-500 text-white px-3 py-1.5 rounded text-xs font-bold shadow-md transition-colors whitespace-nowrap ml-auto sm:ml-2"
+              >
+                Log Out
+              </button>
+            ) : null}
           </div>
         </header>
 
@@ -310,10 +346,13 @@ export default function Home() {
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-full h-32 flex flex-col items-center justify-center gap-2 border border-dashed border-gray-600 rounded bg-[#0b101e] hover:bg-gray-800 hover:border-gray-500 transition-colors text-gray-400"
+                        disabled={isUploading}
+                        className="w-full h-32 flex flex-col items-center justify-center gap-2 border border-dashed border-gray-600 rounded bg-[#0b101e] hover:bg-gray-800 hover:border-gray-500 transition-colors text-gray-400 disabled:opacity-50"
                       >
                         <FaCamera size={24} />
-                        <span className="text-xs uppercase tracking-wider font-bold">Select Photo</span>
+                        <span className="text-xs uppercase tracking-wider font-bold">
+                          {isUploading ? "Uploading..." : "Select Photo"}
+                        </span>
                       </button>
                     )}
                     <input

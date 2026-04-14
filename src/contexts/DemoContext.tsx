@@ -479,8 +479,5 @@ export const DemoProvider = ({ children }: { children: ReactNode }) => {
 
 export const useDemo = () => {
   const context = useContext(DemoContext);
-  if (context === undefined) {
-    throw new Error("useDemo must be used within a DemoProvider");
-  }
   return context;
 };

@@ -1,73 +1,72 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useDemo, UserRole } from "@/contexts/DemoContext";
-import { useSearchParams } from "next/navigation";
-
-import { Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { UserRole } from "@/contexts/DemoContext";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase/config";
 
 function SignUpModalContent() {
-  const { addUser, properties } = useDemo();
-  const searchParams = useSearchParams();
-
   const [isOpen, setIsOpen] = useState(false);
+
   const [role, setRole] = useState<UserRole>("none");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [company, setCompany] = useState("");
+  const [managerCode, setManagerCode] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Contractor selections
   const [selectedTrades, setSelectedTrades] = useState<string[]>([]);
-  const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
-
   const allTrades = ["plumbing", "electric", "tile", "cabinets", "paint", "windows", "doors", "floors", "misc"];
-  const [step, setStep] = useState(1); // 1 = form, 2 = upload app
 
-  useEffect(() => {
-    const roleParam = searchParams.get("role");
-    if (roleParam && (roleParam === "manager" || roleParam === "lead" || roleParam === "contractor")) {
-      setTimeout(() => {
-        setRole(roleParam as UserRole);
-        setIsOpen(true);
-      }, 0);
-
-      // Remove param from URL cleanly without reloading
-      const url = new URL(window.location.href);
-      url.searchParams.delete("role");
-      window.history.replaceState({}, "", url.toString());
-    }
-  }, [searchParams]);
-
-  // Also expose this component to open manually if needed via a global event or prop,
-  // For now, let's just make it a singleton controlled by URL or a prop.
-  // We can use a custom event to trigger it from the Header
   useEffect(() => {
     const handleOpenModal = () => setIsOpen(true);
     window.addEventListener("open-signup", handleOpenModal);
     return () => window.removeEventListener("open-signup", handleOpenModal);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !phone || !company) return;
+    setError("");
 
-    // Default role if opened manually
-    const finalRole = role !== "none" ? role : "manager";
+    if (!name || !email || !password || !phone || !company || role === "none") {
+      setError("Please fill out all fields.");
+      return;
+    }
 
-    // Automatically assign all selected trades to all selected properties
-    const formattedAssignedProperties = selectedProperties.map(propId => ({
-      propertyId: propId,
-      trades: selectedTrades
-    }));
+    if (role === "manager" && managerCode !== "propman2026") {
+      setError("Invalid Manager Access Code.");
+      return;
+    }
 
-    addUser(name, email, phone, company, finalRole, selectedTrades, formattedAssignedProperties);
-    setStep(2);
-  };
+    setLoading(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-  const toggleProperty = (propertyId: string) => {
-    if (selectedProperties.includes(propertyId)) {
-      setSelectedProperties(selectedProperties.filter(id => id !== propertyId));
-    } else {
-      setSelectedProperties([...selectedProperties, propertyId]);
+      await setDoc(doc(db, "users", user.uid), {
+        name,
+        email,
+        phone,
+        company,
+        role,
+        trades: role === "contractor" ? selectedTrades : [],
+        createdAt: new Date().toISOString()
+      });
+
+      setIsOpen(false);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || "Failed to create an account.");
+      } else {
+        setError("Failed to create an account.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,167 +78,138 @@ function SignUpModalContent() {
     }
   };
 
-  const handleInstall = async () => {
-    // In a real PWA, you would listen to `beforeinstallprompt` and trigger it here.
-    // For this demo, we'll just show an alert and close the modal.
-    alert("In a production environment, this will trigger the native PWA install prompt!");
-    setIsOpen(false);
-    setStep(1);
-  };
-
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-2 py-4">
-      <div className="bg-white text-black p-3 md:p-4 rounded-lg w-full max-w-sm shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
+      <div className="bg-white text-black p-4 md:p-6 rounded-lg w-full max-w-sm shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
         <button
-          onClick={() => { setIsOpen(false); setStep(1); }}
+          onClick={() => setIsOpen(false)}
           className="absolute top-2 right-3 text-gray-500 hover:text-black font-bold text-lg"
         >
           &times;
         </button>
 
-        {step === 1 ? (
-          <>
-            <h2 className="text-base font-bold mb-2 text-center">Sign Up</h2>
-            {role !== "none" && (
-              <p className="text-[9px] text-center text-gray-600 mb-2 uppercase tracking-wider font-semibold">
-                Role: <span className="text-blue-600">{role}</span>
-              </p>
-            )}
-            <form onSubmit={handleSubmit} className="space-y-2">
-              <div>
-                <label className="block text-[10px] font-medium mb-0.5">Full Name</label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full border border-gray-300 rounded p-1 text-[10px] focus:ring-2 focus:ring-blue-500"
-                  placeholder="John Doe"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-[10px] font-medium mb-0.5">Email Address</label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full border border-gray-300 rounded p-1 text-[10px] focus:ring-2 focus:ring-blue-500"
-                    placeholder="john@example.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-medium mb-0.5">Phone Number</label>
-                  <input
-                    type="tel"
-                    required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full border border-gray-300 rounded p-1 text-[10px] focus:ring-2 focus:ring-blue-500"
-                    placeholder="555-0198"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-[10px] font-medium mb-0.5">Company</label>
-                <input
-                  type="text"
-                  required
-                  value={company}
-                  onChange={(e) => setCompany(e.target.value)}
-                  className="w-full border border-gray-300 rounded p-1 text-[10px] focus:ring-2 focus:ring-blue-500"
-                  placeholder="ACME Corp"
-                />
-              </div>
+        <h2 className="text-xl font-bold mb-4 text-center uppercase tracking-wider">Sign Up</h2>
 
-              {(role === "contractor" || role === "none") && (
-                <div className="pt-2 border-t border-gray-200 mt-2 space-y-2">
-                  <div>
-                    <label className="block text-[10px] font-bold text-blue-600 mb-1">Select Your Trade Categories</label>
-                    <div className="flex flex-wrap gap-1">
-                      {allTrades.map(trade => (
-                        <button
-                          key={trade}
-                          type="button"
-                          onClick={() => toggleTrade(trade)}
-                          className={`px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase transition-colors border ${
-                            selectedTrades.includes(trade)
-                              ? 'bg-blue-600 text-white border-blue-500 shadow-sm'
-                              : 'bg-gray-100 text-gray-600 border-gray-300 hover:border-gray-400'
-                          }`}
-                        >
-                          {trade}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold text-blue-600 mb-1">Assigned Properties</label>
-                    <div className="flex flex-col gap-1 max-h-20 overflow-y-auto border border-gray-300 rounded p-1 hide-scrollbar">
-                      {properties.map(prop => (
-                        <label key={prop.id} className="flex items-center gap-1.5 cursor-pointer p-0.5 hover:bg-gray-50 rounded">
-                          <input
-                            type="checkbox"
-                            checked={selectedProperties.includes(prop.id)}
-                            onChange={() => toggleProperty(prop.id)}
-                            className="w-2.5 h-2.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                          />
-                          <span className="text-[10px] text-gray-800 truncate">{prop.name}</span>
-                        </label>
-                      ))}
-                      {properties.length === 0 && (
-                        <p className="text-[9px] text-gray-500 italic">No properties available yet.</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-              {role === "none" && (
-                 <div>
-                 <label className="block text-[10px] font-medium mb-0.5">Select Role</label>
-                 <select
-                   value={role}
-                   onChange={(e) => setRole(e.target.value as UserRole)}
-                   className="w-full border border-gray-300 rounded p-1 text-[10px] focus:ring-2 focus:ring-blue-500"
-                 >
-                   <option value="none" disabled>Select a role...</option>
-                   <option value="manager">Manager</option>
-                   <option value="lead">Lead</option>
-                   <option value="contractor">Contractor</option>
-                 </select>
-               </div>
-              )}
-              <button
-                type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold py-1.5 rounded mt-2 transition-colors"
-              >
-                Continue
-              </button>
-            </form>
-          </>
-        ) : (
-          <div className="text-center py-6">
-            <h2 className="text-2xl font-bold mb-4">Welcome, {name}!</h2>
-            <p className="text-gray-600 mb-8">
-              To get the best experience and easy access, please install our app to your home screen.
-            </p>
-            <button
-              onClick={handleInstall}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-lg text-lg shadow-[0_4px_0_rgb(21,128,61)] hover:translate-y-[2px] hover:shadow-[0_2px_0_rgb(21,128,61)] active:translate-y-[4px] active:shadow-none transition-all"
+        {error && <p className="text-red-500 text-xs mb-3 text-center">{error}</p>}
+
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div>
+            <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-gray-700">Select Role</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value as UserRole)}
+              className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
             >
-              Upload App
-            </button>
-            <button
-              onClick={() => { setIsOpen(false); setStep(1); }}
-              className="mt-6 text-gray-500 underline text-sm"
-            >
-              Skip for now
-            </button>
+              <option value="none" disabled>Select a role...</option>
+              <option value="manager">Manager</option>
+              <option value="contractor">Contractor</option>
+            </select>
           </div>
-        )}
+
+          {role === "manager" && (
+             <div>
+               <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-gray-700">Manager Access Code</label>
+               <input
+                 type="password"
+                 required
+                 value={managerCode}
+                 onChange={(e) => setManagerCode(e.target.value)}
+                 className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
+                 placeholder="Enter access code"
+               />
+             </div>
+          )}
+
+          <div>
+            <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-gray-700">Full Name</label>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
+              placeholder="John Doe"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-gray-700">Email Address</label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
+              placeholder="john@example.com"
+            />
+          </div>
+          <div>
+             <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-gray-700">Password</label>
+             <input
+               type="password"
+               required
+               value={password}
+               onChange={(e) => setPassword(e.target.value)}
+               className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
+               placeholder="••••••••"
+             />
+           </div>
+          <div>
+            <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-gray-700">Phone Number</label>
+            <input
+              type="tel"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
+              placeholder="555-0198"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-gray-700">Company</label>
+            <input
+              type="text"
+              required
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+              className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
+              placeholder="ACME Corp"
+            />
+          </div>
+
+          {role === "contractor" && (
+            <div className="pt-2 border-t border-gray-200 mt-2 space-y-2">
+              <div>
+                <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-blue-600">Select Your Trade Categories</label>
+                <div className="flex flex-wrap gap-1">
+                  {allTrades.map(trade => (
+                    <button
+                      key={trade}
+                      type="button"
+                      onClick={() => toggleTrade(trade)}
+                      className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase transition-colors border ${
+                        selectedTrades.includes(trade)
+                          ? 'bg-blue-600 text-white border-blue-500 shadow-sm'
+                          : 'bg-gray-100 text-gray-600 border-gray-300 hover:border-gray-400'
+                      }`}
+                    >
+                      {trade}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-2.5 rounded uppercase tracking-wider mt-4 transition-colors"
+          >
+            {loading ? "Signing up..." : "Complete Sign Up"}
+          </button>
+        </form>
       </div>
     </div>
   );

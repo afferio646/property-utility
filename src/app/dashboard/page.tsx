@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useDemo, TradeType } from "@/contexts/DemoContext";
+
+import { useApp } from "@/hooks/useApp";
+import { TradeType } from "@/contexts/DemoContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaArrowLeft, FaExclamationTriangle, FaTrash } from "react-icons/fa";
 
 export default function Dashboard() {
-  const { users, properties, photos, userRole, updateUserAssignedProperties, updateUserRole, deleteUser, togglePropertyArchive } = useDemo();
+  const { users, properties, photos, userRole, updateUserAssignedProperties, updateUserRole, deleteUser, togglePropertyArchive } = useApp();
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<"directory" | "database" | "users" | "archived">("directory");
@@ -182,7 +184,7 @@ export default function Dashboard() {
                           <button
                             onClick={() => {
                               if(window.confirm(`Are you sure you want to archive "${property.name}"?`)) {
-                                togglePropertyArchive(property.id);
+                                togglePropertyArchive(property.id, !!property.isArchived);
                               }
                             }}
                             className="bg-[#374151] hover:bg-[#4b5563] text-gray-300 border border-[#6b7280] px-2 py-1 rounded text-[8px] font-bold transition whitespace-nowrap ml-2"
@@ -572,7 +574,7 @@ export default function Dashboard() {
                           <button
                             onClick={() => {
                               if(window.confirm(`Are you sure you want to unarchive "${property.name}"?`)) {
-                                togglePropertyArchive(property.id);
+                                togglePropertyArchive(property.id, !!property.isArchived);
                               }
                             }}
                             className="bg-[#374151] hover:bg-[#4b5563] text-gray-300 border border-[#6b7280] px-2 py-1 rounded text-[8px] font-bold transition whitespace-nowrap ml-2"
