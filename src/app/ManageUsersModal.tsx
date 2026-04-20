@@ -7,13 +7,15 @@ import { UserRole } from "@/contexts/DemoContext";
 import { FaUserPlus, FaTimes, FaUserCog, FaTrash } from "react-icons/fa";
 
 export default function ManageUsersModal() {
-  const { userRole, users, addUser, updateUserRole, deleteUser } = useApp();
+  const { userRole, users, updateUserRole, deleteUser } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [company, setCompany] = useState("");
   const [role, setRole] = useState<UserRole>("contractor");
+  const [isAdding, setIsAdding] = useState(false);
+  const [addError, setAddError] = useState("");
 
   // Also open when global event is fired
   React.useEffect(() => {
@@ -38,11 +40,62 @@ export default function ManageUsersModal() {
     setRole("contractor");
   };
 
-  const handleAddUser = (e: React.FormEvent) => {
+  const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
+    setAddError("");
     if (name && email && phone && company && role) {
-      addUser(name, email, phone, company, role);
-      resetForm();
+      setIsAdding(true);
+      try {
+        // Since this is a live Firebase app, we need to create a real user account.
+        // **CRITICAL:** If we use the primary `auth` instance, it will log the manager out and
+        // log them in as the new user. To prevent this, we must create a temporary, secondary
+        // Firebase app instance solely for creating the new user.
+        const { initializeApp } = await import("firebase/app");
+        const { getAuth, createUserWithEmailAndPassword, signOut } = await import("firebase/auth");
+        const { doc, setDoc } = await import("firebase/firestore");
+        const { app: mainApp, db } = await import("@/lib/firebase/config");
+
+        const { getApps, deleteApp } = await import("firebase/app");
+
+        // Use the main app's config to create a secondary app
+        // Check if it already exists to prevent duplicate-app errors
+        const existingApp = getApps().find(app => app.name === "SecondaryApp");
+        const secondaryApp = existingApp || initializeApp(mainApp.options, "SecondaryApp");
+        const secondaryAuth = getAuth(secondaryApp);
+
+        // Use a default password for admin-created accounts
+        const defaultPassword = "password123!";
+
+        // Create the user on the secondary auth instance (so the main session is untouched)
+        const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, defaultPassword);
+        const newUser = userCredential.user;
+
+        // Save the profile info to the main Firestore database
+        await setDoc(doc(db, "users", newUser.uid), {
+          name,
+          email,
+          phone,
+          company,
+          role,
+          trades: [],
+          createdAt: new Date().toISOString()
+        });
+
+        // Sign out and clean up the secondary app instance
+        await signOut(secondaryAuth);
+        await deleteApp(secondaryApp);
+
+        resetForm();
+      } catch (err: unknown) {
+        console.error("Error adding user via Manage Users:", err);
+        if (err instanceof Error) {
+          setAddError(err.message || "Failed to add user.");
+        } else {
+          setAddError("Failed to add user.");
+        }
+      } finally {
+        setIsAdding(false);
+      }
     }
   };
 
@@ -73,6 +126,7 @@ export default function ManageUsersModal() {
               {/* Add User Form */}
               <div className="bg-[#1f2937] p-4 rounded-lg border border-[#374151]">
                 <h3 className="text-lg font-semibold mb-4 border-b border-[#374151] pb-2">Add New User</h3>
+                {addError && <p className="text-red-500 text-xs mb-3 font-semibold">{addError}</p>}
                 <form onSubmit={handleAddUser} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-300">Name</label>
@@ -128,9 +182,10 @@ export default function ManageUsersModal() {
                   </div>
                   <button
                     type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded transition-colors"
+                    disabled={isAdding}
+                    className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-400 text-white font-bold py-2 rounded transition-colors"
                   >
-                    Add User
+                    {isAdding ? "Adding..." : "Add User"}
                   </button>
                 </form>
               </div>
