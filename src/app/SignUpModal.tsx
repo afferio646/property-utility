@@ -23,8 +23,23 @@ function SignUpModalContent() {
   const [selectedTrades, setSelectedTrades] = useState<string[]>([]);
   const allTrades = ["plumbing", "electric", "tile", "cabinets", "paint", "windows", "doors", "floors", "misc"];
 
+  const resetForm = () => {
+    setRole("none");
+    setName("");
+    setEmail("");
+    setPassword("");
+    setPhone("");
+    setCompany("");
+    setManagerCode("");
+    setSelectedTrades([]);
+    setError("");
+  };
+
   useEffect(() => {
-    const handleOpenModal = () => setIsOpen(true);
+    const handleOpenModal = () => {
+      resetForm(); // Always clear old data immediately when the button is clicked
+      setIsOpen(true);
+    };
     window.addEventListener("open-signup", handleOpenModal);
     return () => window.removeEventListener("open-signup", handleOpenModal);
   }, []);
@@ -93,9 +108,12 @@ function SignUpModalContent() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-2 py-2">
-      <div className="bg-white text-black p-4 rounded-lg w-full max-w-sm shadow-2xl relative max-h-[95vh] overflow-y-auto hide-scrollbar">
+      <div className="bg-white text-black p-4 md:p-6 rounded-lg w-full max-w-sm shadow-2xl relative max-h-[85vh] overflow-y-auto hide-scrollbar">
         <button
-          onClick={() => setIsOpen(false)}
+          onClick={() => {
+            setIsOpen(false);
+            resetForm();
+          }}
           className="absolute top-2 right-3 text-gray-500 hover:text-black font-bold text-lg"
         >
           &times;
