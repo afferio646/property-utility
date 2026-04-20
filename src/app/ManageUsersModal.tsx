@@ -118,62 +118,62 @@ export default function ManageUsersModal() {
               <FaTimes size={24} />
             </button>
 
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                <FaUserCog className="text-blue-500" /> Manage Users
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Add User Form */}
-              <div className="bg-[#1f2937] p-4 rounded-lg border border-[#374151]">
-                <h3 className="text-lg font-semibold mb-4 border-b border-[#374151] pb-2">Add New User</h3>
-                {addError && <p className="text-red-500 text-xs mb-3 font-semibold">{addError}</p>}
-                <form onSubmit={handleAddUser} className="space-y-4">
+              <div className="bg-[#1f2937] p-3 md:p-4 rounded-lg border border-[#374151]">
+                <h3 className="text-md font-semibold mb-3 border-b border-[#374151] pb-1">Add New User</h3>
+                {addError && <p className="text-red-500 text-xs mb-2 font-semibold">{addError}</p>}
+                <form onSubmit={handleAddUser} className="space-y-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-300">Name</label>
+                    <label className="block text-xs font-medium mb-0.5 text-gray-300">Name</label>
                     <input
                       type="text"
                       required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-[#111827] border border-[#374151] rounded p-2 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full bg-[#111827] border border-[#374151] rounded p-1.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-300">Email</label>
+                    <label className="block text-xs font-medium mb-0.5 text-gray-300">Email</label>
                     <input
                       type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-[#111827] border border-[#374151] rounded p-2 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full bg-[#111827] border border-[#374151] rounded p-1.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-300">Phone</label>
+                    <label className="block text-xs font-medium mb-0.5 text-gray-300">Phone</label>
                     <input
                       type="tel"
                       required
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full bg-[#111827] border border-[#374151] rounded p-2 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full bg-[#111827] border border-[#374151] rounded p-1.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-300">Company</label>
+                    <label className="block text-xs font-medium mb-0.5 text-gray-300">Company</label>
                     <input
                       type="text"
                       required
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
-                      className="w-full bg-[#111827] border border-[#374151] rounded p-2 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full bg-[#111827] border border-[#374151] rounded p-1.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-300">Role</label>
+                    <label className="block text-xs font-medium mb-0.5 text-gray-300">Role</label>
                     <select
                       value={role}
                       onChange={(e) => setRole(e.target.value as UserRole)}
-                      className="w-full bg-[#111827] border border-[#374151] rounded p-2 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full bg-[#111827] border border-[#374151] rounded p-1.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none"
                     >
                       <option value="manager">Manager</option>
                       <option value="lead">Lead</option>

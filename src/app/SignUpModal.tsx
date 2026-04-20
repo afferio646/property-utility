@@ -108,13 +108,13 @@ function SignUpModalContent() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-2 py-2">
-      <div className="bg-white text-black p-4 md:p-6 rounded-lg w-full max-w-sm shadow-2xl relative max-h-[85vh] overflow-y-auto hide-scrollbar">
+      <div className="bg-white text-black p-4 md:p-5 rounded-lg w-full max-w-sm shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
         <button
           onClick={() => {
             setIsOpen(false);
             resetForm();
           }}
-          className="absolute top-2 right-3 text-gray-500 hover:text-black font-bold text-lg"
+          className="absolute top-1 right-2 text-gray-500 hover:text-black font-bold text-lg"
         >
           &times;
         </button>
@@ -123,13 +123,14 @@ function SignUpModalContent() {
 
         {error && <p className="text-red-500 text-xs mb-2 text-center">{error}</p>}
 
-        <form onSubmit={handleSubmit} className="space-y-2">
+        <form onSubmit={handleSubmit} className="space-y-2" autoComplete="off">
           <div>
-            <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-gray-700">Select Role</label>
+            <label className="block text-xs font-bold mb-0.5 uppercase tracking-wider text-gray-700">Select Role</label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value as UserRole)}
               className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
+              autoComplete="off"
             >
               <option value="none" disabled>Select a role...</option>
               <option value="manager">Manager</option>
@@ -139,76 +140,83 @@ function SignUpModalContent() {
 
           {role === "manager" && (
              <div>
-               <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-gray-700">Manager Access Code</label>
+               <label className="block text-xs font-bold mb-0.5 uppercase tracking-wider text-gray-700">Manager Access Code</label>
                <input
                  type="password"
                  required
                  value={managerCode}
                  onChange={(e) => setManagerCode(e.target.value)}
-                 className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
+                 className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500"
                  placeholder="Enter access code"
+                 autoComplete="new-password"
                />
              </div>
           )}
 
           <div>
-            <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-gray-700">Full Name</label>
+            <label className="block text-xs font-bold mb-0.5 uppercase tracking-wider text-gray-700">Full Name</label>
             <input
               type="text"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500"
               placeholder="John Doe"
+              autoComplete="name"
             />
           </div>
           <div>
-            <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-gray-700">Email Address</label>
+            <label className="block text-xs font-bold mb-0.5 uppercase tracking-wider text-gray-700">Email Address</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500"
               placeholder="john@example.com"
+              autoComplete="off"
+              name="signup-email-prevent-autofill"
             />
           </div>
           <div>
-             <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-gray-700">Password</label>
+             <label className="block text-xs font-bold mb-0.5 uppercase tracking-wider text-gray-700">Password</label>
              <input
                type="password"
                required
                value={password}
                onChange={(e) => setPassword(e.target.value)}
-               className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
+               className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500"
                placeholder="••••••••"
+               autoComplete="new-password"
              />
            </div>
           <div>
-            <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-gray-700">Phone Number</label>
+            <label className="block text-xs font-bold mb-0.5 uppercase tracking-wider text-gray-700">Phone Number</label>
             <input
               type="tel"
               required
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500"
               placeholder="555-0198"
+              autoComplete="tel"
             />
           </div>
           <div>
-            <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-gray-700">Company</label>
+            <label className="block text-xs font-bold mb-0.5 uppercase tracking-wider text-gray-700">Company</label>
             <input
               type="text"
               required
               value={company}
               onChange={(e) => setCompany(e.target.value)}
-              className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500"
               placeholder="ACME Corp"
+              autoComplete="organization"
             />
           </div>
 
           {role === "contractor" && (
-            <div className="pt-2 border-t border-gray-200 mt-2 space-y-2">
+            <div className="pt-2 border-t border-gray-200 mt-1 space-y-1">
               <div>
                 <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-blue-600">Select Your Trade Categories</label>
                 <div className="flex flex-wrap gap-1">
