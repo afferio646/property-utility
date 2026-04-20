@@ -58,7 +58,18 @@ function SignUpModalContent() {
         createdAt: new Date().toISOString()
       });
 
+      // Clear the form fields
+      setRole("none");
+      setName("");
+      setEmail("");
+      setPassword("");
+      setPhone("");
+      setCompany("");
+      setManagerCode("");
+      setSelectedTrades([]);
+
       setIsOpen(false);
+      window.location.reload();
     } catch (err: unknown) {
       console.error("Firebase Auth/Firestore Error:", err);
       if (err instanceof Error) {
@@ -66,8 +77,7 @@ function SignUpModalContent() {
       } else {
         setError("Failed to create an account.");
       }
-    } finally {
-      setLoading(false);
+      setLoading(false); // Only stop loading if there's an error, otherwise let the reload happen
     }
   };
 
@@ -82,8 +92,8 @@ function SignUpModalContent() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-2 py-4">
-      <div className="bg-white text-black p-4 md:p-6 rounded-lg w-full max-w-sm shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-2 py-2">
+      <div className="bg-white text-black p-4 rounded-lg w-full max-w-sm shadow-2xl relative max-h-[95vh] overflow-y-auto hide-scrollbar">
         <button
           onClick={() => setIsOpen(false)}
           className="absolute top-2 right-3 text-gray-500 hover:text-black font-bold text-lg"
@@ -91,13 +101,13 @@ function SignUpModalContent() {
           &times;
         </button>
 
-        <h2 className="text-xl font-bold mb-4 text-center uppercase tracking-wider">Sign Up</h2>
+        <h2 className="text-lg font-bold mb-3 text-center uppercase tracking-wider">Sign Up</h2>
 
-        {error && <p className="text-red-500 text-xs mb-3 text-center">{error}</p>}
+        {error && <p className="text-red-500 text-xs mb-2 text-center">{error}</p>}
 
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-2">
           <div>
-            <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-gray-700">Select Role</label>
+            <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-gray-700">Select Role</label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value as UserRole)}
@@ -111,7 +121,7 @@ function SignUpModalContent() {
 
           {role === "manager" && (
              <div>
-               <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-gray-700">Manager Access Code</label>
+               <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-gray-700">Manager Access Code</label>
                <input
                  type="password"
                  required
@@ -124,7 +134,7 @@ function SignUpModalContent() {
           )}
 
           <div>
-            <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-gray-700">Full Name</label>
+            <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-gray-700">Full Name</label>
             <input
               type="text"
               required
@@ -135,7 +145,7 @@ function SignUpModalContent() {
             />
           </div>
           <div>
-            <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-gray-700">Email Address</label>
+            <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-gray-700">Email Address</label>
             <input
               type="email"
               required
@@ -146,7 +156,7 @@ function SignUpModalContent() {
             />
           </div>
           <div>
-             <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-gray-700">Password</label>
+             <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-gray-700">Password</label>
              <input
                type="password"
                required
@@ -157,7 +167,7 @@ function SignUpModalContent() {
              />
            </div>
           <div>
-            <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-gray-700">Phone Number</label>
+            <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-gray-700">Phone Number</label>
             <input
               type="tel"
               required
@@ -168,7 +178,7 @@ function SignUpModalContent() {
             />
           </div>
           <div>
-            <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-gray-700">Company</label>
+            <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-gray-700">Company</label>
             <input
               type="text"
               required
@@ -182,7 +192,7 @@ function SignUpModalContent() {
           {role === "contractor" && (
             <div className="pt-2 border-t border-gray-200 mt-2 space-y-2">
               <div>
-                <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-blue-600">Select Your Trade Categories</label>
+                <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-blue-600">Select Your Trade Categories</label>
                 <div className="flex flex-wrap gap-1">
                   {allTrades.map(trade => (
                     <button
