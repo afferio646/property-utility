@@ -123,13 +123,14 @@ function SignUpModalContent() {
 
         {error && <p className="text-red-500 text-xs mb-2 text-center">{error}</p>}
 
-        <form onSubmit={handleSubmit} className="space-y-2">
+        <form onSubmit={handleSubmit} className="space-y-2" autoComplete="off">
           <div>
             <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-gray-700">Select Role</label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value as UserRole)}
               className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
+              autoComplete="off"
             >
               <option value="none" disabled>Select a role...</option>
               <option value="manager">Manager</option>
@@ -147,6 +148,7 @@ function SignUpModalContent() {
                  onChange={(e) => setManagerCode(e.target.value)}
                  className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
                  placeholder="Enter access code"
+                 autoComplete="new-password"
                />
              </div>
           )}
@@ -160,6 +162,7 @@ function SignUpModalContent() {
               onChange={(e) => setName(e.target.value)}
               className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
               placeholder="John Doe"
+              autoComplete="name"
             />
           </div>
           <div>
@@ -171,6 +174,8 @@ function SignUpModalContent() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
               placeholder="john@example.com"
+              autoComplete="off"
+              name="signup-email-prevent-autofill"
             />
           </div>
           <div>
@@ -182,6 +187,7 @@ function SignUpModalContent() {
                onChange={(e) => setPassword(e.target.value)}
                className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
                placeholder="••••••••"
+               autoComplete="new-password"
              />
            </div>
           <div>
@@ -193,6 +199,7 @@ function SignUpModalContent() {
               onChange={(e) => setPhone(e.target.value)}
               className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
               placeholder="555-0198"
+              autoComplete="tel"
             />
           </div>
           <div>
@@ -204,6 +211,7 @@ function SignUpModalContent() {
               onChange={(e) => setCompany(e.target.value)}
               className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
               placeholder="ACME Corp"
+              autoComplete="organization"
             />
           </div>
 

@@ -51,7 +51,7 @@ export default function LoginModal() {
 
         {error && <p className="text-red-500 text-xs mb-3 text-center">{error}</p>}
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-4" autoComplete="on">
           <div>
             <label className="block text-xs font-bold mb-1 uppercase tracking-wider text-gray-700">Email</label>
             <input
@@ -61,6 +61,8 @@ export default function LoginModal() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
               placeholder="you@example.com"
+              autoComplete="username"
+              name="login-email"
             />
           </div>
           <div>
@@ -72,6 +74,8 @@ export default function LoginModal() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
               placeholder="••••••••"
+              autoComplete="current-password"
+              name="login-password"
             />
           </div>
           <button
