@@ -131,17 +131,17 @@ function SignUpModalContent() {
           <form id="signup-form" onSubmit={handleSubmit} className="space-y-2" autoComplete="off">
             <div>
               <label className="block text-xs font-bold mb-0.5 uppercase tracking-wider text-gray-700">Select Role</label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value as UserRole)}
-              className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
-              autoComplete="off"
-            >
-              <option value="none" disabled>Select a role...</option>
-              <option value="manager">Manager</option>
-              <option value="contractor">Contractor</option>
-            </select>
-          </div>
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value as UserRole)}
+                className="w-full border border-gray-300 rounded p-2 text-sm focus:ring-2 focus:ring-blue-500"
+                autoComplete="off"
+              >
+                <option value="none" disabled>Select a role...</option>
+                <option value="manager">Manager</option>
+                <option value="contractor">Contractor</option>
+              </select>
+            </div>
 
           {role === "manager" && (
              <div>
