@@ -107,30 +107,25 @@ function SignUpModalContent() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-2 py-2 overflow-hidden">
-      <div className="bg-white text-black rounded-lg w-full max-w-sm shadow-2xl relative flex flex-col max-h-[90vh] md:max-h-[85vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-2 py-2">
+      <div className="bg-white text-black p-4 md:p-5 rounded-lg w-full max-w-sm shadow-2xl relative max-h-[95vh] overflow-y-auto hide-scrollbar">
+        <button
+          onClick={() => {
+            setIsOpen(false);
+            resetForm();
+          }}
+          className="absolute top-1 right-2 text-gray-500 hover:text-black font-bold text-lg"
+        >
+          &times;
+        </button>
 
-        {/* Header */}
-        <div className="px-4 py-3 border-b border-gray-200 shrink-0">
-          <button
-            onClick={() => {
-              setIsOpen(false);
-              resetForm();
-            }}
-            className="absolute top-2 right-3 text-gray-500 hover:text-black font-bold text-lg"
-          >
-            &times;
-          </button>
-          <h2 className="text-lg font-bold text-center uppercase tracking-wider m-0">Sign Up</h2>
-        </div>
+        <h2 className="text-lg font-bold mb-3 text-center uppercase tracking-wider">Sign Up</h2>
 
-        {/* Scrollable Form Body */}
-        <div className="p-4 overflow-y-auto hide-scrollbar flex-1">
-          {error && <p className="text-red-500 text-xs mb-2 text-center">{error}</p>}
+        {error && <p className="text-red-500 text-xs mb-2 text-center">{error}</p>}
 
-          <form id="signup-form" onSubmit={handleSubmit} className="space-y-2" autoComplete="off">
-            <div>
-              <label className="block text-xs font-bold mb-0.5 uppercase tracking-wider text-gray-700">Select Role</label>
+        <form onSubmit={handleSubmit} className="space-y-2" autoComplete="off">
+          <div>
+            <label className="block text-xs font-bold mb-0.5 uppercase tracking-wider text-gray-700">Select Role</label>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value as UserRole)}
@@ -220,43 +215,38 @@ function SignUpModalContent() {
             />
           </div>
 
-            {role === "contractor" && (
-              <div className="pt-2 border-t border-gray-200 mt-2 space-y-1 pb-1">
-                <div>
-                  <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-blue-600">Select Your Trade Categories</label>
-                  <div className="flex flex-wrap gap-1">
-                    {allTrades.map(trade => (
-                      <button
-                        key={trade}
-                        type="button"
-                        onClick={() => toggleTrade(trade)}
-                        className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase transition-colors border ${
-                          selectedTrades.includes(trade)
-                            ? 'bg-blue-600 text-white border-blue-500 shadow-sm'
-                            : 'bg-gray-100 text-gray-600 border-gray-300 hover:border-gray-400'
-                        }`}
-                      >
-                        {trade}
-                      </button>
-                    ))}
-                  </div>
+          {role === "contractor" && (
+            <div className="pt-2 border-t border-gray-200 mt-1 space-y-1">
+              <div>
+                <label className="block text-[10px] font-bold mb-0.5 uppercase tracking-wider text-blue-600">Select Your Trade Categories</label>
+                <div className="flex flex-wrap gap-1">
+                  {allTrades.map(trade => (
+                    <button
+                      key={trade}
+                      type="button"
+                      onClick={() => toggleTrade(trade)}
+                      className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase transition-colors border ${
+                        selectedTrades.includes(trade)
+                          ? 'bg-blue-600 text-white border-blue-500 shadow-sm'
+                          : 'bg-gray-100 text-gray-600 border-gray-300 hover:border-gray-400'
+                      }`}
+                    >
+                      {trade}
+                    </button>
+                  ))}
                 </div>
               </div>
-            )}
-          </form>
-        </div>
+            </div>
+          )}
 
-        {/* Footer with sticky button */}
-        <div className="p-4 border-t border-gray-200 bg-gray-50 rounded-b-lg shrink-0">
           <button
             type="submit"
-            form="signup-form"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-2.5 rounded uppercase tracking-wider transition-colors"
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-2.5 rounded uppercase tracking-wider mt-4 transition-colors"
           >
             {loading ? "Signing up..." : "Complete Sign Up"}
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );
